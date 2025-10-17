@@ -31,11 +31,14 @@ export default function Navigation() {
           <Link href="/shop" className="hover:text-cyan-300 transition-colors">
             Магазин
           </Link>
-          <Link href="#about" className="hover:text-cyan-300 transition-colors">
+          <Link
+            href="/#about"
+            className="hover:text-cyan-300 transition-colors"
+          >
             Про нас
           </Link>
           <Link
-            href="#contact"
+            href="/#contact"
             className="hover:text-cyan-300 transition-colors"
           >
             Контакти
