@@ -1,4 +1,3 @@
-import React from "react";
 import Navigation from "../components/Navigation";
 import CategoryCard from "../components/CategoryCard";
 import ProductCard from "../components/ProductCard";
