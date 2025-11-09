@@ -1,6 +1,7 @@
 import Navigation from "../components/Navigation";
-import CategoryCard from "../components/CategoryCard";
+
 import ProductCard from "../components/ProductCard";
+import CategoryCardServer from "../components/server/CategoryCardServer";
 
 export default function Page() {
   return (
@@ -18,7 +19,7 @@ export default function Page() {
       </section>
 
       <section className="px-8 pb-10">
-        <CategoryCard />
+        <CategoryCardServer />
       </section>
 
       <section className="pb-20 px-8">
