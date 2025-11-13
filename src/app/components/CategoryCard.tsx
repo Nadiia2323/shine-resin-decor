@@ -5,7 +5,11 @@ import Image from "next/image";
 const categoryImage =
   "https://res.cloudinary.com/dqgvmwnpl/image/upload/v1761499529/resin-shop/5210369_bphh79.jpg";
 
-export default function CategoryCard({ categories }) {
+type CategoryCardProps = {
+  categories: string[];
+};
+
+export default function CategoryCard({ categories }: CategoryCardProps) {
   console.log("categories (client):", categories);
 
   return (

@@ -1,7 +1,6 @@
 import Navigation from "../components/Navigation";
-
-import ProductCard from "../components/ProductCard";
 import CategoryCardServer from "../components/server/CategoryCardServer";
+import ProductCardServer from "../components/server/ProductCardServer";
 
 export default function Page() {
   return (
@@ -23,7 +22,7 @@ export default function Page() {
       </section>
 
       <section className="pb-20 px-8">
-        <ProductCard />
+        <ProductCardServer />
       </section>
 
       <section className="text-center pb-24">

@@ -1,18 +1,21 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase-client";
 
-export default async function ProductCard() {
-  const { data: products, error } = await supabase.from("products").select("*");
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  images: string[];
+};
+type ProductCardProps = {
+  products: Product[];
+};
 
-  if (error) {
-    console.error("Ошибка загрузки продуктов:", error);
-    return <p>Не удалось загрузить продукты</p>;
-  }
-
+export default function ProductCard({ products }: ProductCardProps) {
   return (
     <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
-      {products.map(({ id, name, price, images }) => {
+      {products?.map(({ id, name, price, images }) => {
         const mainImage =
           images && images.length > 0 ? images[0] : "/placeholder.png";
 
