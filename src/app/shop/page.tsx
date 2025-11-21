@@ -1,8 +1,19 @@
 import Navigation from "../components/Navigation";
-import CategoryCardServer from "../components/server/CategoryCardServer";
-import ProductCardServer from "../components/server/ProductCardServer";
+import PageClient from "./PageClient";
+import { supabase } from "@/lib/supabase-client";
 
-export default function Page() {
+export default async function Page() {
+  const { data: products } = await supabase.from("products").select("*");
+  const { data: categoriesData } = await supabase
+    .from("products")
+    .select("category");
+
+  const uniqueCategories = Array.from(
+    new Set(categoriesData?.map((p) => p.category).filter(Boolean))
+  );
+
+  const categories = ["All", ...uniqueCategories];
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-400">
       <Navigation />
@@ -17,13 +28,7 @@ export default function Page() {
         </p>
       </section>
 
-      <section className="px-8 pb-10">
-        <CategoryCardServer />
-      </section>
-
-      <section className="pb-20 px-8">
-        <ProductCardServer />
-      </section>
+      <PageClient categories={categories} products={products || []} />
 
       <section className="text-center pb-24">
         <h2 className="text-2xl font-semibold text-slate-700 mb-4">

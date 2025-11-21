@@ -1,21 +1,27 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
+import { CategoryCardProps } from "@/types";
 
 const categoryImage =
   "https://res.cloudinary.com/dqgvmwnpl/image/upload/v1761499529/resin-shop/5210369_bphh79.jpg";
 
-type CategoryCardProps = {
-  categories: string[];
-};
+export default function CategoryCard({
+  categories,
+  onSelect,
+}: CategoryCardProps) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-export default function CategoryCard({ categories }: CategoryCardProps) {
-  console.log("categories (client):", categories);
-
+  const handleCategory = (category: string) => {
+    setSelectedCategory(category);
+    onSelect(category);
+  };
+  console.log("selectedCategory :>> ", selectedCategory);
   return (
     <div className="flex flex-wrap justify-center gap-6 pb-10">
       {categories?.map((category, index) => (
         <button
+          onClick={() => handleCategory(category)}
           key={index}
           className="relative w-48 h-28 rounded-xl overflow-hidden group shadow-lg hover:scale-105 transition-transform"
         >

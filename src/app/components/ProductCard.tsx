@@ -1,16 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
-type Product = {
-  id: number;
-  name: string;
-  price: number;
-  images: string[];
-};
-type ProductCardProps = {
-  products: Product[];
-};
+import { ProductCardProps } from "@/types";
 
 export default function ProductCard({ products }: ProductCardProps) {
   return (
