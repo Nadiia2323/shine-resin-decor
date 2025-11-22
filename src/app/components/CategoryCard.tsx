@@ -16,6 +16,7 @@ export default function CategoryCard({
     setSelectedCategory(category);
     onSelect(category);
   };
+
   console.log("selectedCategory :>> ", selectedCategory);
   return (
     <div className="flex flex-wrap justify-center gap-6 pb-10">
@@ -23,7 +24,12 @@ export default function CategoryCard({
         <button
           onClick={() => handleCategory(category)}
           key={index}
-          className="relative w-48 h-28 rounded-xl overflow-hidden group shadow-lg hover:scale-105 transition-transform"
+          className={`
+    relative w-48 h-28 rounded-xl overflow-hidden group shadow-lg 
+    transition-transform duration-300
+    hover:scale-105
+    ${selectedCategory === category ? "scale-110" : ""}
+  `}
         >
           <Image
             src={categoryImage}
@@ -31,8 +37,19 @@ export default function CategoryCard({
             fill
             className="object-cover"
           />
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          <span className="absolute bottom-4 left-4 text-white font-bold uppercase">
+
+          <span
+            className={`
+      absolute bottom-4 left-4 font-bold uppercase px-2 py-1 rounded-md transition-all
+      ${
+        selectedCategory === category
+          ? "bg-white/90 text-[#0e1538]"
+          : "text-white"
+      }
+    `}
+          >
             {category}
           </span>
         </button>
