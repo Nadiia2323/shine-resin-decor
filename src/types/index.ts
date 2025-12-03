@@ -28,3 +28,9 @@ export type CategoryCardProps = {
   categories: string[];
   onSelect: (category: string) => void;
 };
+
+export type ProductPageProps = {
+  params: {
+    id: string;
+  };
+};
