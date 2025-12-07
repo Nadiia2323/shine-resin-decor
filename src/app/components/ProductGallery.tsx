@@ -15,13 +15,13 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
   const mainImage = hasImages ? images[activeIndex] : "/placeholder.png";
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 ">
       <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-100">
         <Image
           src={mainImage}
           alt={name}
           fill
-          className="object-cover transition-transform duration-500 hover:scale-105"
+          className="object-cover w-100 transition-transform duration-500 hover:scale-105"
         />
       </div>
 

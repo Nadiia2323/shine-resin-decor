@@ -4,6 +4,7 @@ import { ProductPageProps } from "@/types";
 import Navigation from "@/app/components/Navigation";
 import Link from "next/link";
 import ProductGallery from "@/app/components/ProductGallery";
+import RelatedProducts from "@/app/components/RelatedProducts";
 
 export default async function Page({ params }: ProductPageProps) {
   const { data: product } = await supabase
@@ -11,8 +12,15 @@ export default async function Page({ params }: ProductPageProps) {
     .select("*")
     .eq("id", params.id)
     .single();
+  const { data: categories } = await supabase
+    .from("products")
+    .select("*")
+    .eq("category", product.category);
 
-  console.log("product :>> ", product);
+  const relatedProducts = (categories ?? []).filter(
+    (item) => item.id !== product.id
+  );
+  console.log("categpries :>> ", relatedProducts);
 
   const images = product?.images ?? [];
 
@@ -21,17 +29,20 @@ export default async function Page({ params }: ProductPageProps) {
       <Navigation />
 
       {product ? (
-        <section className="max-w-5xl mx-auto px-6 py-10 lg:py-16">
-          <div className="mb-6">
+        <section className="flex flex-row space-x-4 mx-auto px-6 py-20 ">
+          <div className=" flex items-center justify-center">
             <Link
               href="/shop"
-              className="inline-flex items-center text-sm text-slate-700 hover:text-slate-900"
+              className="inline-flex text-right text-sm text-slate-700 hover:text-slate-900"
             >
               ← Назад до магазину
             </Link>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/70 px-4 py-6 sm:px-8 sm:py-10 grid gap-10 md:grid-cols-[1.2fr,1fr] items-center">
+          <div
+            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/70 px-4 py-6 sm:px-8 sm:py-10 grid gap-10 grid gap-6 md:grid-cols-2 items-start
+ items-center"
+          >
             <ProductGallery images={images} name={product.name} />
 
             <div className="flex flex-col gap-5">
@@ -100,6 +111,9 @@ export default async function Page({ params }: ProductPageProps) {
           </div>
         </section>
       )}
+      <section>
+        <RelatedProducts relatedProducts={relatedProducts} />
+      </section>
     </main>
   );
 }

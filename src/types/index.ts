@@ -34,3 +34,6 @@ export type ProductPageProps = {
     id: string;
   };
 };
+export type RelatedProductsProps = {
+ relatedProducts: Product[]
+}
