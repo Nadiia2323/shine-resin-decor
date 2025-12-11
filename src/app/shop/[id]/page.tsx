@@ -29,6 +29,22 @@ export default async function Page({ params }: ProductPageProps) {
     .filter((item) => item.id !== product.id)
     .slice(0, 4);
 
+  const getStatusBadgeClasses = (status?: string) => {
+    const base =
+      "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide w-fit";
+
+    const variants: Record<string, string> = {
+      "в наявності": "bg-green-100 text-green-700",
+      "під замовлення": "bg-amber-100 text-amber-700",
+    };
+
+    const fallback = "bg-slate-200 text-slate-700";
+
+    const variant = variants[status ?? ""] ?? fallback;
+
+    return `${base} ${variant}`;
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-100 to-slate-200">
       <Navigation />
@@ -56,6 +72,9 @@ export default async function Page({ params }: ProductPageProps) {
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               {product.name}
             </h1>
+            <span className={getStatusBadgeClasses(product.status)}>
+              {product.status}
+            </span>
 
             <p className="text-2xl font-semibold text-slate-800">
               {product.price} ₴

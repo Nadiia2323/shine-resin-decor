@@ -18,7 +18,7 @@ export default async function Page() {
     <main className="min-h-screen bg-gradient-to-b from-slate-400">
       <Navigation />
 
-      <section className="text-center py-25">
+      <section className="text-center pt-25 mb-5">
         <h1 className="text-4xl font-extrabold text-slate-800 mb-3">
           Переглянути товари
         </h1>

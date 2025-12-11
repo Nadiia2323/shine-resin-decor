@@ -1,10 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import { CategoryCardProps } from "@/types";
-
-const categoryImage =
-  "https://res.cloudinary.com/dqgvmwnpl/image/upload/v1761499529/resin-shop/5210369_bphh79.jpg";
 
 export default function CategoryCard({
   categories,
@@ -17,44 +13,29 @@ export default function CategoryCard({
     onSelect(category);
   };
 
-  console.log("selectedCategory :>> ", selectedCategory);
   return (
-    <div className="flex flex-wrap justify-center gap-6 pb-10">
-      {categories?.map((category, index) => (
-        <button
-          onClick={() => handleCategory(category)}
-          key={index}
-          className={`
-    relative w-48 h-28 rounded-xl overflow-hidden group shadow-lg 
-    transition-transform duration-300
-    hover:scale-105
-    ${selectedCategory === category ? "scale-110" : ""}
-  `}
-        >
-          <Image
-            src={categoryImage}
-            alt={category}
-            fill
-            className="object-cover"
-          />
+    <div className="flex flex-wrap justify-center gap-4  ">
+      {categories.map((category, index) => {
+        const isActive = selectedCategory === category;
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-          <span
+        return (
+          <button
+            key={index}
+            onClick={() => handleCategory(category)}
             className={`
-      absolute bottom-4 left-4 font-bold uppercase px-2 py-1 rounded-md transition-all
-      ${
-        selectedCategory === category
-          ? "bg-white/90 text-[#0e1538]"
-          : "text-white"
-      }
-    `}
+              px-6 py-3 rounded-full uppercase font-semibold tracking-wide text-sm
+              transition-all duration-300 shadow-sm border backdrop-blur-md
+              ${
+                isActive
+                  ? "bg-white text-slate-900 border-white shadow-xl scale-105"
+                  : "bg-white/10 text-white border-white/20 hover:bg-white/20 hover:border-white/40"
+              }
+            `}
           >
             {category}
-          </span>
-        </button>
-      ))}
-      <div className="h-0.5 w-full bg-black shadow-inner"></div>
+          </button>
+        );
+      })}
     </div>
   );
 }
