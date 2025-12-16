@@ -7,6 +7,7 @@ export type Product = {
   status?: string
 };
 
+
 export type Category = {
   name: string;
 };
@@ -31,10 +32,9 @@ export type CategoryCardProps = {
 };
 
 export type ProductPageProps = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
+
 export type RelatedProductsProps = {
  relatedProducts: Product[]
 }

@@ -8,10 +8,11 @@ import RelatedProducts from "@/app/components/RelatedProducts";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: ProductPageProps) {
+  const { id } = await params;
   const { data: product } = await supabase
     .from("products")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!product) {
