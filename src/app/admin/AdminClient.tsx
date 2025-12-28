@@ -1,0 +1,24 @@
+"use client";
+import React from "react";
+import { AdminClientProps } from "@/types";
+import AdminHeader from "./_components/AdminHeader";
+import AdminStats from "./_components/AdminStats";
+import ProductsTable from "./_components/ProductsTable";
+
+export default function AdminClient({ products }: AdminClientProps) {
+  console.log("products :>> ", products);
+  return (
+    <main className="min-h-screen bg-slate-100 px-6 py-10">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <AdminHeader />
+        <AdminStats products={products} />
+
+        <div className="rounded-2xl bg-white shadow border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <ProductsTable products={products} />
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

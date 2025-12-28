@@ -38,3 +38,16 @@ export type ProductPageProps = {
 export type RelatedProductsProps = {
  relatedProducts: Product[]
 }
+export type ProductStatus = "в наявності" | "під замовлення";
+export type AdminProduct = {
+  id: number;
+  name: string | null;
+  price: number | null;
+  status: ProductStatus;
+  category: string | null;
+  images:string[] | null
+};
+
+export type AdminClientProps = {
+  products: AdminProduct[];
+};
