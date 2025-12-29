@@ -2,6 +2,8 @@
 import React from "react";
 import { AdminClientProps } from "@/types";
 import Image from "next/image";
+import { toggleStatus } from "../actions";
+import PriceCell from "./PriceCell";
 
 export default function ProductsTable({ products }: AdminClientProps) {
   return (
@@ -61,13 +63,28 @@ export default function ProductsTable({ products }: AdminClientProps) {
               </td>
 
               <td className="px-5 py-4">
-                <span className={`${statusBase} ${statusClass}`}>
-                  {p.status ?? "—"}
-                </span>
+                <form action={toggleStatus}>
+                  <input type="hidden" name="id" value={p.id} />
+                  <input type="hidden" name="status" value={p.status ?? ""} />
+
+                  <button
+                    type="submit"
+                    className={`
+        ${statusBase} ${statusClass}
+        cursor-pointer hover:opacity-80 transition
+      `}
+                    title="Click to toggle status"
+                  >
+                    {p.status ?? "—"}
+                  </button>
+                </form>
               </td>
 
               <td className="px-5 py-4 text-right font-semibold text-slate-900">
-                {p.price} ₴
+                <div className="flex items-center justify-end gap-2">
+                  <PriceCell id={p.id} price={p.price} />
+                  <span className="text-slate-500">₴</span>
+                </div>
               </td>
 
               <td className="px-5 py-4">

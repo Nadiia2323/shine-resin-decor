@@ -51,3 +51,7 @@ export type AdminProduct = {
 export type AdminClientProps = {
   products: AdminProduct[];
 };
+export type PriceCellProps = {
+  id: number;
+  price: number | null;
+};
