@@ -39,19 +39,43 @@ export type RelatedProductsProps = {
  relatedProducts: Product[]
 }
 export type ProductStatus = "в наявності" | "під замовлення";
-export type AdminProduct = {
-  id: number;
-  name: string | null;
-  price: number | null;
-  status: ProductStatus;
-  category: string | null;
-  images:string[] | null
-};
 
-export type AdminClientProps = {
-  products: AdminProduct[];
-};
+
+// export type AdminClientProps = {
+//   products: AdminProduct[];
+//   categories: string[]
+// };
 export type PriceCellProps = {
   id: number;
   price: number | null;
 };
+
+
+
+export type AdminProduct = {
+  id: number;
+  name: string | null;
+  price: number | null;
+  status: ProductStatus | null;
+  category: string | null;
+  images: string[] | null;
+};
+
+export type AdminPageProps = {
+  products: AdminProduct[];
+  categories?: string[]; // уже готовый список категорий
+};
+
+export type AdminClientProps = AdminPageProps;
+
+export type ProductsTableProps = AdminPageProps;
+
+export type CategoryCellProps = {
+  id: number;
+  category: string | null;
+  categories?: string[];
+};
+export type NameCellProps = {
+  id: number,
+  name:string | null
+}

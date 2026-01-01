@@ -39,6 +39,9 @@ export default async function AdminPage() {
   if (error) {
     return <p className="text-red-600">Admin error: {error.message}</p>;
   }
+  const categories = Array.from(
+    new Set(products.flatMap((p) => (p.category ? [p.category] : [])))
+  );
 
-  return <AdminClient products={products} />;
+  return <AdminClient products={products} categories={categories} />;
 }

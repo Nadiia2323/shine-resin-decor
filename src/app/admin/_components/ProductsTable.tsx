@@ -4,8 +4,13 @@ import { AdminClientProps } from "@/types";
 import Image from "next/image";
 import { toggleStatus } from "../actions";
 import PriceCell from "./PriceCell";
+import CategoryCell from "./CategoryCell";
+import NameCell from "./NameCell";
 
-export default function ProductsTable({ products }: AdminClientProps) {
+export default function ProductsTable({
+  products,
+  categories,
+}: AdminClientProps) {
   return (
     <table className="min-w-full text-sm">
       <thead className="bg-slate-50 text-slate-600">
@@ -46,21 +51,14 @@ export default function ProductsTable({ products }: AdminClientProps) {
                       height={48}
                     />
                   </div>
-
-                  <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 truncate">
-                      {p.name}
-                    </p>
-                    <p className="text-xs text-slate-500">ID: {p.id}</p>
-                  </div>
+                  <NameCell name={p.name} id={p.id} />
                 </div>
               </td>
-
-              <td className="px-5 py-4 text-slate-700">
-                <span className="inline-flex items-center rounded-full bg-cyan-50 text-cyan-700 px-2 py-0.5 text-xs font-semibold">
-                  {p.category ?? "—"}
-                </span>
-              </td>
+              <CategoryCell
+                id={p.id}
+                category={p.category}
+                categories={categories}
+              />
 
               <td className="px-5 py-4">
                 <form action={toggleStatus}>
