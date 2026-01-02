@@ -7,8 +7,12 @@ import ProductGallery from "@/app/components/ProductGallery";
 import RelatedProducts from "@/app/components/RelatedProducts";
 import { notFound } from "next/navigation";
 
-export default async function Page({ params }: ProductPageProps) {
+export default async function Page({ params, searchParams }: ProductPageProps) {
   const { id } = await params;
+  const sp = await searchParams;
+  const from = sp?.from;
+  const backHref = from === "admin" ? "/admin" : "/shop";
+
   const { data: product } = await supabase
     .from("products")
     .select("*")
@@ -53,10 +57,10 @@ export default async function Page({ params }: ProductPageProps) {
       <section className="flex flex-row space-x-4 mx-auto px-6 py-20">
         <div className="flex items-center justify-center">
           <Link
-            href="/shop"
+            href={backHref}
             className="inline-flex text-right text-sm text-slate-700 hover:text-slate-900"
           >
-            ← Назад до магазину
+            ← Назад
           </Link>
         </div>
 

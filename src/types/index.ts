@@ -4,7 +4,8 @@ export type Product = {
   price: number;
   images: string[];
   category: string;
-  status?: string
+  status?: string;
+  description?: string
 };
 
 
@@ -33,6 +34,7 @@ export type CategoryCardProps = {
 
 export type ProductPageProps = {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export type RelatedProductsProps = {
@@ -79,3 +81,6 @@ export type NameCellProps = {
   id: number,
   name:string | null
 }
+ export type AdminEditClientProps = {
+  product: Product;
+};

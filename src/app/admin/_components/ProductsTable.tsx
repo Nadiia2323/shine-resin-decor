@@ -6,6 +6,7 @@ import { toggleStatus } from "../actions";
 import PriceCell from "./PriceCell";
 import CategoryCell from "./CategoryCell";
 import NameCell from "./NameCell";
+import Link from "next/link";
 
 export default function ProductsTable({
   products,
@@ -87,18 +88,20 @@ export default function ProductsTable({
 
               <td className="px-5 py-4">
                 <div className="flex justify-end gap-2">
-                  <button
+                  <Link
+                    href={`/shop/${p.id}?from=admin`}
                     className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700
                                    hover:bg-slate-50 active:scale-[0.98] transition"
                   >
                     View
-                  </button>
-                  <button
+                  </Link>
+                  <Link
+                    href={`/admin/products/${p.id}/edit`}
                     className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700
                                    hover:bg-slate-50 active:scale-[0.98] transition"
                   >
                     Edit
-                  </button>
+                  </Link>
                   <button
                     className="rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700
                                    hover:bg-red-100 active:scale-[0.98] transition"
