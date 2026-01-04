@@ -2,11 +2,11 @@
 import React from "react";
 import { AdminClientProps } from "@/types";
 import Image from "next/image";
-import { toggleStatus } from "../actions";
+import { toggleStatus, updateName } from "../actions";
 import PriceCell from "./PriceCell";
 import CategoryCell from "./CategoryCell";
-import NameCell from "./NameCell";
 import Link from "next/link";
+import InlineEditField from "./InLineEditField";
 
 export default function ProductsTable({
   products,
@@ -52,7 +52,18 @@ export default function ProductsTable({
                       height={48}
                     />
                   </div>
-                  <NameCell name={p.name} id={p.id} />
+
+                  <InlineEditField
+                    id={p.id}
+                    name="name"
+                    defaultValue={(p.name ?? "").trim()}
+                    action={updateName}
+                    formClassName=""
+                    wrapperClassName="min-w-0"
+                    meta={<p className="text-xs text-slate-500">ID: {p.id}</p>}
+                    inputClassName="font-semibold text-slate-900 truncate w-full bg-transparent outline-none"
+                    placeholder="—"
+                  />
                 </div>
               </td>
               <CategoryCell

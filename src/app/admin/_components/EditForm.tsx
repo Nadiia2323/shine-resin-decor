@@ -1,24 +1,27 @@
 import { AdminEditClientProps } from "@/types";
 import React from "react";
 
+import InlineEditField from "./InLineEditField";
+import { updateName } from "../actions";
+
 export default function EditForm({ product }: AdminEditClientProps) {
   return (
     <div className="p-6 sm:p-8 space-y-6">
-      {/* Name */}
-      <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-          Product name
-        </label>
-        <input
-          defaultValue={product.name}
-          className="
-                    w-full rounded-xl border border-slate-200 bg-white
-                    px-4 py-2.5 text-sm text-slate-900
-                    outline-none transition
-                    focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100
-                  "
-        />
-      </div>
+      <InlineEditField
+        id={product.id}
+        name="name"
+        defaultValue={(product.name ?? "").trim()}
+        action={updateName}
+        label="Product name"
+        wrapperClassName="space-y-2"
+        inputClassName="
+        w-full rounded-xl border border-slate-200 bg-white
+        px-4 py-2.5 text-sm text-slate-900
+        outline-none transition
+        focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100
+      "
+        placeholder="Product name…"
+      />
 
       {/* Category + Status */}
       <div className="grid gap-4 sm:grid-cols-2">

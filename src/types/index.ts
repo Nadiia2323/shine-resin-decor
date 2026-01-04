@@ -1,5 +1,5 @@
 export type Product = {
-  id: string;
+  id: number;
   name: string;
   price: number;
   images: string[];
@@ -65,7 +65,7 @@ export type AdminProduct = {
 
 export type AdminPageProps = {
   products: AdminProduct[];
-  categories?: string[]; // уже готовый список категорий
+  categories?: string[]; 
 };
 
 export type AdminClientProps = AdminPageProps;
@@ -77,10 +77,25 @@ export type CategoryCellProps = {
   category: string | null;
   categories?: string[];
 };
-export type NameCellProps = {
-  id: number,
-  name:string | null
-}
+// export type NameCellProps = {
+//   id: number,
+//   name:string | null
+// }
  export type AdminEditClientProps = {
   product: Product;
+};
+export type InlineEditFieldProps = {
+  id: number | string;
+  name: string; 
+  defaultValue: string;
+  action: (formData: FormData) => Promise<void>; 
+  type?: React.HTMLInputTypeAttribute; 
+  placeholder?: string;
+  inputClassName?: string;
+  formClassName?: string;
+  wrapperClassName?: string;
+
+  
+  label?: string;
+  meta?: React.ReactNode;
 };
