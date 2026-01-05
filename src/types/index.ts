@@ -1,10 +1,10 @@
 export type Product = {
   id: number;
   name: string;
-  price: number;
+  price: number | null;
   images: string[];
   category: string;
-  status?: string;
+  status?: string | null;
   description?: string
 };
 
@@ -58,7 +58,7 @@ export type AdminProduct = {
   id: number;
   name: string | null;
   price: number | null;
-  status: ProductStatus | null;
+  status?: string | null;
   category: string | null;
   images: string[] | null;
 };
@@ -81,9 +81,11 @@ export type CategoryCellProps = {
 //   id: number,
 //   name:string | null
 // }
- export type AdminEditClientProps = {
+export type AdminEditClientProps = {
+   categories?: string[]
   product: Product;
 };
+export type EditFormProps = { product: AdminProduct; categories?: string[] }
 export type InlineEditFieldProps = {
   id: number | string;
   name: string; 
@@ -98,4 +100,13 @@ export type InlineEditFieldProps = {
   
   label?: string;
   meta?: React.ReactNode;
+};
+export type InlineEditSelectProps = {
+  id: number;
+  name: string;
+  defaultValue?: string;
+  options?: string[];
+  action: (formData: FormData) => Promise<void>;
+  selectClassName?: string;
+  placeholder?: string;
 };

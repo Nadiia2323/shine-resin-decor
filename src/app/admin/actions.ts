@@ -140,6 +140,7 @@ export async function updateCategory(formData: FormData) {
   if (error) throw new Error(error.message);
 
   revalidatePath("/admin");
+  revalidatePath(`/admin/products/${id}/edit`);
 }
 
 export async function updateName(formData:FormData) {

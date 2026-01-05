@@ -26,6 +26,17 @@ export default async function AdminEditPage({
   if (!product) {
     NotFound();
   }
+  const { data: products, error } = await supabase
+    .from("products")
+    .select("category")
+    .order("name", { ascending: true });
 
-  return <AdminEditClient product={product} />;
+  if (error) {
+    return <p className="text-red-600">Admin error: {error.message}</p>;
+  }
+  const categories = Array.from(
+    new Set(products.flatMap((p) => (p.category ? [p.category] : [])))
+  );
+
+  return <AdminEditClient product={product} categories={categories} />;
 }

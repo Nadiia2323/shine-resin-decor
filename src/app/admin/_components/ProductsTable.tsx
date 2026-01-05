@@ -2,11 +2,12 @@
 import React from "react";
 import { AdminClientProps } from "@/types";
 import Image from "next/image";
-import { toggleStatus, updateName } from "../actions";
+import { toggleStatus, updateCategory, updateName } from "../actions";
 import PriceCell from "./PriceCell";
-import CategoryCell from "./CategoryCell";
+// import CategoryCell from "./CategoryCell";
 import Link from "next/link";
 import InlineEditField from "./InLineEditField";
+import InlineEditSelect from "./InLineEditSelect";
 
 export default function ProductsTable({
   products,
@@ -66,11 +67,22 @@ export default function ProductsTable({
                   />
                 </div>
               </td>
-              <CategoryCell
+              <td className="px-5 py-4 text-slate-700">
+                <InlineEditSelect
+                  id={p.id}
+                  name="category"
+                  defaultValue={p.category ?? ""}
+                  options={categories}
+                  action={updateCategory}
+                  selectClassName="inline-flex items-center rounded-full bg-cyan-50 text-cyan-700 px-2 py-0.5 text-xs font-semibold"
+                />
+              </td>
+
+              {/* <CategoryCell
                 id={p.id}
                 category={p.category}
                 categories={categories}
-              />
+              /> */}
 
               <td className="px-5 py-4">
                 <form action={toggleStatus}>

@@ -1,12 +1,13 @@
-import { AdminEditClientProps } from "@/types";
+import { EditFormProps } from "@/types";
 import React from "react";
 
 import InlineEditField from "./InLineEditField";
-import { updateName } from "../actions";
+import { updateCategory, updateName } from "../actions";
+import InlineEditSelect from "./InLineEditSelect";
 
-export default function EditForm({ product }: AdminEditClientProps) {
+export default function EditForm({ product, categories }: EditFormProps) {
   return (
-    <div className="p-6 sm:p-8 space-y-6">
+    <div>
       <InlineEditField
         id={product.id}
         name="name"
@@ -29,20 +30,17 @@ export default function EditForm({ product }: AdminEditClientProps) {
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
             Category
           </label>
-          <select
-            defaultValue={product.category}
-            className="
-                      w-full rounded-xl border border-slate-200 bg-white
+          <InlineEditSelect
+            id={product.id}
+            name="category"
+            defaultValue={product.category ?? ""}
+            options={categories}
+            action={updateCategory}
+            selectClassName="w-full rounded-xl border border-slate-200 bg-white
                       px-4 py-2.5 text-sm text-slate-900
                       outline-none transition
-                      focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100
-                    "
-          >
-            <option value="">—</option>
-            <option value="clocks">clocks</option>
-            <option value="paintings">paintings</option>
-            <option value="decor">decor</option>
-          </select>
+                      focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+          />
         </div>
 
         <div className="space-y-2">
@@ -75,7 +73,7 @@ export default function EditForm({ product }: AdminEditClientProps) {
             type="number"
             min={1}
             step={1}
-            defaultValue={product.price}
+            // defaultValue={product.price}
             className="
                       w-full rounded-xl border border-slate-200 bg-white
                       px-4 py-2.5 text-sm text-slate-900
@@ -98,7 +96,7 @@ export default function EditForm({ product }: AdminEditClientProps) {
         <textarea
           rows={5}
           placeholder="Короткий опис товару…"
-          defaultValue={product.description}
+          // defaultValue={product.description}
           className="
                     w-full rounded-xl border border-slate-200 bg-white
                     px-4 py-3 text-sm text-slate-900

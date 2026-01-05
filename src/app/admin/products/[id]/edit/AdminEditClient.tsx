@@ -6,7 +6,10 @@ import React from "react";
 import { AdminEditClientProps } from "@/types";
 import PreviewForm from "@/app/admin/_components/PreviewForm";
 
-export default function AdminEditClient({ product }: AdminEditClientProps) {
+export default function AdminEditClient({
+  product,
+  categories,
+}: AdminEditClientProps) {
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8">
       <div className="mx-auto w-full max-w-5xl space-y-6">
@@ -17,7 +20,7 @@ export default function AdminEditClient({ product }: AdminEditClientProps) {
           <div className="flex flex-row">
             {/* LEFT — FORM */}
             <div className="p-6 sm:p-8 space-y-6">
-              <EditForm product={product} />
+              <EditForm product={product} categories={categories} />
             </div>
 
             {/* RIGHT — PREVIEW */}
