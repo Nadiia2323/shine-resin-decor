@@ -16,20 +16,16 @@ export default function AdminEditClient({
         <EditHeader />
 
         <section className="rounded-2xl bg-white shadow border border-slate-200 overflow-hidden">
-          {/* Main content */}
           <div className="flex flex-row">
-            {/* LEFT — FORM */}
             <div className="p-6 sm:p-8 space-y-6">
               <EditForm product={product} categories={categories} />
             </div>
 
-            {/* RIGHT — PREVIEW */}
             <aside className="border-t lg:border-t-0 lg:border-l border-slate-200 bg-slate-50/60 p-6 sm:p-8">
-              <PreviewForm images={product.images} />
+              <PreviewForm product={product} />
             </aside>
           </div>
 
-          {/* BOTTOM — IMAGES */}
           <div className="border-t border-slate-200 bg-white p-6 sm:p-8">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">
               Images
@@ -57,12 +53,6 @@ export default function AdminEditClient({
             </button>
           </div>
         </section>
-
-        {/* Footer hint */}
-        <p className="text-xs text-slate-400">
-          Tip: позже можно добавить autosave + server actions (updateName,
-          updatePrice, toggleStatus, updateCategory).
-        </p>
       </div>
     </main>
   );

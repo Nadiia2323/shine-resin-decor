@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { PreviewFormProps } from "@/types";
 
-type ImagesProps = {
-  images: string[];
-};
-
-export default function PreviewForm({ images }: ImagesProps) {
-  const safeImages = images?.length ? images : ["/placeholder.png"];
+export default function PreviewForm({ product }: PreviewFormProps) {
+  const safeImages = product.images?.length
+    ? product.images
+    : ["/placeholder.png"];
   const [activeImage, setActiveImage] = useState(safeImages[0]);
   return (
     <>
@@ -61,28 +60,30 @@ export default function PreviewForm({ images }: ImagesProps) {
         <div className="p-5 space-y-3">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center rounded-full bg-cyan-50 text-cyan-700 px-2 py-0.5 text-xs font-semibold">
-              clocks
+              {product.category}
             </span>
             <span className="inline-flex items-center rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-semibold">
-              в наявності
+              {product.status}
             </span>
           </div>
 
-          <p className="text-base font-bold text-slate-900">Годинник Ukraine</p>
+          <p className="text-base font-bold text-slate-900">{product.name}</p>
 
           <p className="text-sm text-slate-500 line-clamp-3">
-            Унікальний виріб з епоксидної смоли, створений вручну з любовʼю.
+            {product.description}
           </p>
 
           <div className="flex items-center justify-between pt-2">
-            <p className="text-lg font-bold text-slate-900">1200 ₴</p>
-            <a
+            <p className="text-lg font-bold text-slate-900">
+              {product.price} ₴
+            </p>
+            {/* <a
               //   href="/shop/1"
               className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700
                                        hover:bg-slate-50 active:scale-[0.98] transition"
             >
               Open in shop
-            </a>
+            </a> */}
           </div>
         </div>
       </div>

@@ -45,6 +45,48 @@ export async function toggleStatus(formData: FormData) {
 
   revalidatePath("/admin");
 }
+export async function updateStatus(formData: FormData) {
+  const idRaw = formData.get("id");
+  const statusRaw = formData.get("status");
+
+  if (typeof idRaw !== "string" || idRaw.trim() === "") {
+    throw new Error("Invalid product id");
+  }
+  if (typeof statusRaw !== "string" || statusRaw.trim() === "") {
+    throw new Error("Invalid status");
+  }
+
+  const id = Number(idRaw);
+  const newStatus = statusRaw.trim();
+
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new Error("Invalid product id");
+  }
+
+  const allowed = new Set(["в наявності", "під замовлення"]);
+  if (!allowed.has(newStatus)) {
+    throw new Error("Invalid status");
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) throw new Error(userError.message);
+  if (!user) throw new Error("Not authenticated");
+
+  const { error } = await supabase
+    .from("products")
+    .update({ status: newStatus })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/products/${id}/edit`);
+}
 
 export async function updatePrice(formData: FormData) {
   const idRaw = formData.get("id");
