@@ -367,3 +367,26 @@ export async function createProduct(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
 }
+
+export async function saveProductOptions(formData: FormData) {
+  const id = Number(formData.get("id"));
+  const optionsJson = formData.get("options");
+
+  if (!Number.isInteger(id) || id <= 0) throw new Error("Invalid id");
+  if (typeof optionsJson !== "string") throw new Error("Invalid options");
+
+  const options = JSON.parse(optionsJson);
+
+  const supabase = await createSupabaseServerClient();
+
+  const { error } = await supabase
+    .from("products")
+    .update({ options })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin");
+  revalidatePath(`/admin/products/${id}/edit`);
+}
+

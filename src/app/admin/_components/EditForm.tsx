@@ -1,5 +1,5 @@
+"use client";
 import { EditFormProps } from "@/types";
-import React from "react";
 
 import InlineEditField from "./InLineEditField";
 import {
@@ -11,6 +11,7 @@ import {
 import InlineEditSelect from "./InLineEditSelect";
 import PriceCell from "./PriceCell";
 import InlineEditTextarea from "./InlineEditTextarea";
+import OptionsEditor from "./OptionsEditor";
 
 export default function EditForm({ product, categories }: EditFormProps) {
   return (
@@ -94,10 +95,15 @@ export default function EditForm({ product, categories }: EditFormProps) {
           Tip: намагайся бути лаконічною (2–4 речення).
         </p>
       </div>
+      <OptionsEditor
+        productId={product.id}
+        initialOptions={product.options ?? []}
+        maxOptions={5}
+      />
 
       {/* Options (placeholder) */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
             Options (extra)
           </label>
@@ -115,25 +121,7 @@ export default function EditForm({ product, categories }: EditFormProps) {
             Тут позже будет список опций (name + price) и кнопки
             удалить/редактировать.
           </p>
-        </div>
-      </div>
-
-      {/* Mobile buttons */}
-      <div className="flex flex-col gap-3 sm:hidden pt-2">
-        <button
-          type="button"
-          className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm
-                             hover:bg-slate-800 active:scale-[0.98] transition"
-        >
-          Save changes
-        </button>
-        <button
-          type="button"
-          className="rounded-full border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-700
-                             hover:bg-red-100 active:scale-[0.98] transition"
-        >
-          Delete
-        </button>
+        </div> */}
       </div>
     </div>
   );

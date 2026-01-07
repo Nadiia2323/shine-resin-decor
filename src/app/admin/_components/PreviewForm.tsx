@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { PreviewFormProps } from "@/types";
+import OptionsPreview from "./OptionsPreview";
 
 export default function PreviewForm({ product }: PreviewFormProps) {
   const safeImages = product.images?.length
@@ -77,6 +78,7 @@ export default function PreviewForm({ product }: PreviewFormProps) {
             <p className="text-lg font-bold text-slate-900">
               {product.price} ₴
             </p>
+
             {/* <a
               //   href="/shop/1"
               className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700
@@ -85,6 +87,7 @@ export default function PreviewForm({ product }: PreviewFormProps) {
               Open in shop
             </a> */}
           </div>
+          <OptionsPreview options={product.options} />
         </div>
       </div>
     </>

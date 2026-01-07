@@ -52,6 +52,10 @@ export type PriceCellProps = {
   price: number | null;
 };
 
+export type ProductOption = {
+  name: string;
+  price: number;
+};
 
 
 export type AdminProduct = {
@@ -62,6 +66,7 @@ export type AdminProduct = {
   category: string | null;
   description: string | null;
   images: string[] | null;
+  options: ProductOption[]
 };
 export type PreviewFormProps = {
   product: AdminProduct
@@ -76,11 +81,7 @@ export type AdminClientProps = AdminPageProps;
 
 export type ProductsTableProps = AdminPageProps;
 
-// export type CategoryCellProps = {
-//   id: number;
-//   category: string | null;
-//   categories?: string[];
-// };
+
 
 export type AdminEditClientProps = {
    categories?: string[]
