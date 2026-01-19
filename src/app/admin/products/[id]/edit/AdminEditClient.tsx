@@ -5,10 +5,13 @@ import React from "react";
 
 import { AdminEditClientProps } from "@/types";
 import PreviewForm from "@/app/admin/_components/PreviewForm";
+import ProductImagesClient from "@/app/admin/_components/ProductImagesClient";
 
 export default function AdminEditClient({
   product,
   categories,
+  productId,
+  initialImages,
 }: AdminEditClientProps) {
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8">
@@ -25,8 +28,12 @@ export default function AdminEditClient({
               <PreviewForm product={product} />
             </aside>
           </div>
+          <ProductImagesClient
+            productId={productId}
+            initialImages={initialImages}
+          />
 
-          <div className="border-t border-slate-200 bg-white p-6 sm:p-8">
+          {/* <div className="border-t border-slate-200 bg-white p-6 sm:p-8">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">
               Images
             </p>
@@ -51,7 +58,7 @@ export default function AdminEditClient({
             >
               Upload images
             </button>
-          </div>
+          </div> */}
         </section>
       </div>
     </main>

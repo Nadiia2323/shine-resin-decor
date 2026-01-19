@@ -33,7 +33,7 @@ export default async function AdminPage() {
 
   const { data: products, error } = await supabase
     .from("products")
-    .select("id,name,price,status,category,images")
+    .select("id,name,price,status,category,description,options,images")
     .order("name", { ascending: true });
 
   if (error) {

@@ -1,6 +1,6 @@
 import React from "react";
 
-type ProductOption = { name: string; price: number };
+import { ProductOption } from "@/types";
 
 export default function OptionsPreview({
   options,

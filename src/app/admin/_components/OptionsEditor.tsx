@@ -2,13 +2,19 @@
 
 import React from "react";
 import type { ProductOption } from "@/types";
-import { saveProductOptions } from "../actions"; // путь подстрой под себя
+import { saveProductOptions } from "../actions";
 
 type Props = {
   productId: number;
   initialOptions?: ProductOption[];
   maxOptions?: number;
 };
+
+function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  return "Failed to save";
+}
 
 export default function OptionsEditor({
   productId,
@@ -25,16 +31,18 @@ export default function OptionsEditor({
     setOptions(next);
     setSaving(true);
     setError(null);
-    function getErrorMessage(err: unknown): string {
-      if (err instanceof Error) return err.message;
-      if (typeof err === "string") return err;
-      return "Failed to save";
-    }
+
+    const cleaned = next
+      .map((o) => ({
+        name: (o.name ?? "").trim(),
+        price: o.price ?? 0,
+      }))
+      .filter((o) => o.name.length > 0 && o.price != null);
 
     try {
       const fd = new FormData();
       fd.append("id", String(productId));
-      fd.append("options", JSON.stringify(next));
+      fd.append("options", JSON.stringify(cleaned));
       await saveProductOptions(fd);
     } catch (e: unknown) {
       setError(getErrorMessage(e));
@@ -45,12 +53,11 @@ export default function OptionsEditor({
 
   const addOption = async () => {
     if (!canAdd) return;
-    await persist([...options, { name: "", price: 0 }]);
+    await persist([...options, { name: "", price: null }]);
   };
 
   const removeOption = async (index: number) => {
-    const next = options.filter((_, i) => i !== index);
-    await persist(next);
+    await persist(options.filter((_, i) => i !== index));
   };
 
   const updateLocal = (index: number, patch: Partial<ProductOption>) => {
@@ -60,11 +67,7 @@ export default function OptionsEditor({
   };
 
   const saveOnBlur = async () => {
-    const cleaned = options.map((o) => ({
-      name: (o.name ?? "").trim(),
-      price: Number(o.price) || 0,
-    }));
-    await persist(cleaned);
+    await persist(options);
   };
 
   return (
@@ -128,13 +131,16 @@ export default function OptionsEditor({
 
                   <div className="flex items-center gap-2">
                     <input
-                      value={Number.isFinite(opt.price) ? opt.price : 0}
-                      onChange={(e) =>
-                        updateLocal(idx, { price: Number(e.target.value) })
-                      }
+                      value={opt.price ?? ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
+
+                        updateLocal(idx, {
+                          price: v === "" ? null : Number(v),
+                        });
+                      }}
                       onBlur={saveOnBlur}
                       type="number"
-                      min={0}
                       step={1}
                       className="
                         w-28 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900

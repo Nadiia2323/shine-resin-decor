@@ -6,6 +6,7 @@ export type Product = {
   category: string;
   status?: string | null;
   description?: string
+  options: ProductOption[] | null
 };
 
 
@@ -52,9 +53,11 @@ export type PriceCellProps = {
   price: number | null;
 };
 
+
+
 export type ProductOption = {
   name: string;
-  price: number;
+  price: number | null;
 };
 
 
@@ -69,7 +72,7 @@ export type AdminProduct = {
   options: ProductOption[]
 };
 export type PreviewFormProps = {
-  product: AdminProduct
+  product: Product
 }
 
 export type AdminPageProps = {
@@ -80,14 +83,23 @@ export type AdminPageProps = {
 export type AdminClientProps = AdminPageProps;
 
 export type ProductsTableProps = AdminPageProps;
-
-
+export type ProductImage = {
+  id: string;
+  url: string;
+  public_id: string;
+  position: number;
+};
 
 export type AdminEditClientProps = {
-   categories?: string[]
+  productId: number;
+  initialImages: ProductImage[];
+  categories?: string[];
   product: Product;
 };
-export type EditFormProps = { product: AdminProduct; categories?: string[] }
+
+
+
+export type EditFormProps = { product: Product; categories?: string[] }
 export type InlineEditFieldProps = {
   id: number | string;
   name: string; 
@@ -112,3 +124,4 @@ export type InlineEditSelectProps = {
   selectClassName?: string;
   placeholder?: string;
 };
+export type NewImage = { url: string; public_id: string };
