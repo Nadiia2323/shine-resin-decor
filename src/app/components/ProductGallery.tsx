@@ -1,27 +1,38 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type ProductImage = {
+  id: number;
+  url: string;
+  public_id: string;
+  position: number;
+};
 
 type ProductGalleryProps = {
-  images: string[];
+  images: ProductImage[];
   name: string;
 };
 
 export default function ProductGallery({ images, name }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const hasImages = images && images.length > 0;
-  const mainImage = hasImages ? images[activeIndex] : "/placeholder.png";
+  const hasImages = images.length > 0;
+  const mainImage = hasImages ? images[activeIndex]?.url : "/placeholder.png";
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [images]);
 
   return (
-    <div className="flex flex-col gap-4 ">
+    <div className="flex flex-col gap-4">
       <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-100">
         <Image
           src={mainImage}
           alt={name}
           fill
-          className="object-cover w-100 transition-transform duration-500 hover:scale-105"
+          className="object-cover transition-transform duration-500 hover:scale-105"
         />
       </div>
 
@@ -29,7 +40,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
         <div className="flex gap-3 flex-wrap">
           {images.map((img, index) => (
             <button
-              key={index}
+              key={img.id}
               type="button"
               onClick={() => setActiveIndex(index)}
               className={`
@@ -43,7 +54,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
               `}
             >
               <Image
-                src={img}
+                src={img.url}
                 alt={`${name} preview ${index + 1}`}
                 fill
                 className="object-cover"

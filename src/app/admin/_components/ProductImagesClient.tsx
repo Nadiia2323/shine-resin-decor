@@ -41,7 +41,7 @@ export default function ProductImagesClient({
     try {
       // 1️⃣ signature
       const sigRes = await fetch(
-        `/api/admin/products/${productId}/cloudinary-signature`
+        `/api/admin/products/${productId}/cloudinary-signature`,
       );
       if (!sigRes.ok) throw new Error("Signature failed");
       const sig = await sigRes.json();
@@ -59,7 +59,7 @@ export default function ProductImagesClient({
 
         const res = await fetch(
           `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
-          { method: "POST", body: form }
+          { method: "POST", body: form },
         );
 
         if (!res.ok) throw new Error("Cloudinary upload failed");
@@ -97,7 +97,7 @@ export default function ProductImagesClient({
     try {
       const res = await fetch(
         `/api/admin/products/${productId}/images/${imageId}`,
-        { method: "DELETE" }
+        { method: "DELETE" },
       );
       if (!res.ok) throw new Error("Delete failed");
 
@@ -124,11 +124,7 @@ export default function ProductImagesClient({
             className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100"
           >
             {/* image */}
-            <Image
-              src={img.url}
-              alt=""
-              className="h-full w-full object-cover"
-            />
+            <Image src={img.url} alt="" fill className="object-cover" />
 
             {/* delete */}
             <button

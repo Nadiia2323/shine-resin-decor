@@ -7,6 +7,7 @@ export type Product = {
   status?: string | null;
   description?: string
   options: ProductOption[] | null
+  product_images: ProductImage[]
 };
 
 
@@ -68,7 +69,7 @@ export type AdminProduct = {
   status?: string | null;
   category: string | null;
   description: string | null;
-  images: string[] | null;
+  product_images: ProductImage[];
   options: ProductOption[]
 };
 export type PreviewFormProps = {

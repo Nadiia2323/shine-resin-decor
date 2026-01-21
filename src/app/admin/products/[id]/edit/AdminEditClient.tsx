@@ -13,6 +13,7 @@ export default function AdminEditClient({
   productId,
   initialImages,
 }: AdminEditClientProps) {
+  console.log("product :>> ", product);
   return (
     <main className="min-h-screen bg-slate-100 px-4 py-8">
       <div className="mx-auto w-full max-w-5xl space-y-6">

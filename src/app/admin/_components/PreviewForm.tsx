@@ -1,14 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { PreviewFormProps } from "@/types";
 import OptionsPreview from "./OptionsPreview";
 
 export default function PreviewForm({ product }: PreviewFormProps) {
-  const safeImages = product.images?.length
-    ? product.images
-    : ["/placeholder.png"];
+  const safeImages = useMemo(() => {
+    const urls = product.product_images?.map((i) => i.url) ?? [];
+    return urls.length ? urls : ["/placeholder.png"];
+  }, [product.product_images]);
   const [activeImage, setActiveImage] = useState(safeImages[0]);
+
+  useEffect(() => {
+    setActiveImage(safeImages[0]);
+  }, [safeImages]);
   return (
     <>
       <div className="flex items-center justify-between">

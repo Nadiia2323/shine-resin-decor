@@ -9,6 +9,7 @@ export default function AdminClient({
   products,
   categories,
 }: AdminClientProps) {
+  console.log("products :>> ", products);
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <div className="max-w-6xl mx-auto space-y-6">

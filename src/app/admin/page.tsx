@@ -33,15 +33,35 @@ export default async function AdminPage() {
 
   const { data: products, error } = await supabase
     .from("products")
-    .select("id,name,price,status,category,description,options,images")
+    .select("*")
     .order("name", { ascending: true });
 
   if (error) {
     return <p className="text-red-600">Admin error: {error.message}</p>;
   }
   const categories = Array.from(
-    new Set(products.flatMap((p) => (p.category ? [p.category] : [])))
+    new Set(products.flatMap((p) => (p.category ? [p.category] : []))),
   );
 
-  return <AdminClient products={products} categories={categories} />;
+  const ids = (products ?? []).map((p) => p.id);
+
+  const { data: imgs } = await supabase
+    .from("product_images")
+    .select("*")
+    .in("product_id", ids)
+    .order("position", { ascending: true });
+
+  const imagesByProductId = new Map<number, typeof imgs>();
+  for (const img of imgs ?? []) {
+    const arr = imagesByProductId.get(img.product_id) ?? [];
+    arr.push(img);
+    imagesByProductId.set(img.product_id, arr);
+  }
+
+  const productsWithImages = (products ?? []).map((p) => ({
+    ...p,
+    product_images: imagesByProductId.get(p.id) ?? [],
+  }));
+
+  return <AdminClient products={productsWithImages} categories={categories} />;
 }

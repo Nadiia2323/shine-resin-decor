@@ -4,13 +4,11 @@ import NotFound from "@/app/shop/[id]/not-found";
 import AdminEditClient from "./AdminEditClient";
 
 type PageProps = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
 export default async function AdminEditPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const productId = Number(id);
   if (!Number.isFinite(productId)) NotFound();
@@ -23,11 +21,21 @@ export default async function AdminEditPage({ params }: PageProps) {
 
   if (!user) redirect("/login");
 
-  const { data: product } = await supabase
+  const { data: product, error: productError } = await supabase
     .from("products")
-    .select("*")
+    .select(
+      `
+      *,
+      product_images (id,url,public_id,position)
+    `,
+    )
     .eq("id", productId)
+    .order("position", { foreignTable: "product_images", ascending: true })
     .single();
+
+  if (productError) {
+    return <p className="text-red-600">Admin error: {productError.message}</p>;
+  }
 
   if (!product) NotFound();
 
@@ -41,21 +49,15 @@ export default async function AdminEditPage({ params }: PageProps) {
   }
 
   const categories = Array.from(
-    new Set((products ?? []).flatMap((p) => (p.category ? [p.category] : [])))
+    new Set((products ?? []).flatMap((p) => (p.category ? [p.category] : []))),
   );
-
-  const { data: images } = await supabase
-    .from("product_images")
-    .select("id,url,public_id,position")
-    .eq("product_id", productId)
-    .order("position");
 
   return (
     <AdminEditClient
       product={product}
       categories={categories}
       productId={productId}
-      initialImages={images ?? []}
+      initialImages={product.product_images ?? []}
     />
   );
 }

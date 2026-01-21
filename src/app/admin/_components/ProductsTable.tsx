@@ -33,11 +33,11 @@ export default function ProductsTable({
             p.status === "в наявності"
               ? "bg-green-100 text-green-700"
               : p.status === "під замовлення"
-              ? "bg-amber-100 text-amber-700"
-              : "bg-slate-200 text-slate-700";
+                ? "bg-amber-100 text-amber-700"
+                : "bg-slate-200 text-slate-700";
           const mainImage =
-            Array.isArray(p.images) && p.images.length > 0
-              ? p.images[0]
+            p.product_images?.length > 0
+              ? p.product_images[0].url
               : "/placeholder.png";
 
           return (

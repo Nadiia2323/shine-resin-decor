@@ -1,5 +1,4 @@
-import React from "react";
-import { supabase } from "@/lib/supabase-client";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { ProductPageProps } from "@/types";
 import Navigation from "@/app/components/Navigation";
 import Link from "next/link";
@@ -12,18 +11,28 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
   const sp = await searchParams;
   const from = sp?.from;
   const backHref = from === "admin" ? "/admin" : "/shop";
+  const productId = Number(id);
+  if (!Number.isFinite(productId)) notFound();
+  const supabase = await createSupabaseServerClient();
 
   const { data: product } = await supabase
     .from("products")
-    .select("*")
-    .eq("id", id)
+    .select(
+      `
+      *,
+      product_images (id,url,public_id,position)
+    `,
+    )
+    .eq("id", productId)
+    .order("position", { foreignTable: "product_images", ascending: true })
     .single();
 
   if (!product) {
     notFound();
   }
 
-  const images = product.images ?? [];
+  const images = product.product_images ?? [];
+  console.log("images :>> ", images);
 
   const { data: categories } = await supabase
     .from("products")
