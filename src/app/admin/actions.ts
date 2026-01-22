@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import {  ProductStatus } from "@/types";
 
-
+import { redirect } from "next/navigation";
 
 
 
@@ -130,25 +129,45 @@ export async function updatePrice(formData: FormData) {
   revalidatePath("/admin");
 }
 
-export async function deleteProduct(formData:FormData) {
-  const idRaw = formData.get("id")
-  const id = Number(idRaw)
-    if (!Number.isInteger(id) || id <= 0) {
-  throw new Error("Invalid product id");
-  }
-  const supabase = await createSupabaseServerClient()
+export async function deleteProduct(formData: FormData) {
+  const idRaw = formData.get("id");
+  const id = Number(idRaw);
 
-  const { data: { user }, error: userError } = await supabase.auth.getUser()
-  if (userError) {
-    throw new Error (userError.message)
-  }
-  if (!user) {
-    throw new Error ("Not authenticated")
-  }
-  const { error } = await supabase.from('products').delete().eq('id', id)
+  console.log("[deleteProduct] idRaw:", idRaw, "=>", id);
+
+  if (!Number.isFinite(id)) throw new Error("Invalid id");
+
+  const supabase = await createSupabaseServerClient();
+
+  const { data: userRes, error: userErr } = await supabase.auth.getUser();
+  console.log("[deleteProduct] user:", userRes?.user?.id, "err:", userErr?.message);
+
+  // ВАЖНО: сначала удалим зависимые картинки (если FK без cascade)
+  const { error: imgErr } = await supabase
+    .from("product_images")
+    .delete()
+    .eq("product_id", id);
+
+  console.log("[deleteProduct] delete images err:", imgErr?.message);
+
+  // ВАЖНО: просим вернуть удалённые строки, чтобы понять удалилось ли
+  const { data, error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", id)
+    .select("id");
+
+  console.log("[deleteProduct] delete products data:", data, "err:", error?.message);
+
   if (error) throw new Error(error.message);
 
+  // Если data пустой массив — это почти всегда RLS (нет прав)
+  if (!data || data.length === 0) {
+    throw new Error("Delete blocked (likely RLS). No rows deleted.");
+  }
+
   revalidatePath("/admin");
+  redirect("/admin")
 }
 
 export async function updateCategory(formData: FormData) {
@@ -264,89 +283,114 @@ export async function updateDescription(formData: FormData) {
   revalidatePath("/admin");
 }
 
-export async function createProduct(formData: FormData) {
+// export async function createProduct(formData: FormData) {
  
-  const nameRaw = formData.get("name");
-  const descriptionRaw = formData.get("description");
-  const priceRaw = formData.get("price");
-  const categoryRaw = formData.get("category");
-  const statusRaw = formData.get("status");
-  const imagesRaw = formData.get("images");  
-  const optionsRaw = formData.get("options"); 
+//   const nameRaw = formData.get("name");
+//   const descriptionRaw = formData.get("description");
+//   const priceRaw = formData.get("price");
+//   const categoryRaw = formData.get("category");
+//   const statusRaw = formData.get("status");
+//   const imagesRaw = formData.get("images");
+//   const optionsRaw = formData.get("options");
 
-  const name = String(nameRaw ?? "").trim();
-  if (!name) throw new Error("Invalid name");
-  if (name.length > 120) throw new Error("Name is too long");
+//   const name = String(nameRaw ?? "").trim();
+//   if (!name) throw new Error("Invalid name");
+//   if (name.length > 120) throw new Error("Name is too long");
 
-  const description = String(descriptionRaw ?? "").trim();
-  if (!description) throw new Error("Invalid description");
-  if (description.length > 2000) throw new Error("Description is too long");
+//   const description = String(descriptionRaw ?? "").trim();
+//   if (!description) throw new Error("Invalid description");
+//   if (description.length > 2000) throw new Error("Description is too long");
 
-  const category = String(categoryRaw ?? "").trim();
-  if (!category) throw new Error("Invalid category");
-  if (category.length > 60) throw new Error("Category is too long");
+//   const category = String(categoryRaw ?? "").trim();
+//   if (!category) throw new Error("Invalid category");
+//   if (category.length > 60) throw new Error("Category is too long");
 
 
-  const priceNum = Number(String(priceRaw ?? "").trim());
-  if (!Number.isFinite(priceNum) || priceNum <= 0) throw new Error("Invalid price");
-  const price = Math.round(priceNum); 
+//   const priceNum = Number(String(priceRaw ?? "").trim());
+//   if (!Number.isFinite(priceNum) || priceNum <= 0) throw new Error("Invalid price");
+//   const price = Math.round(priceNum);
 
-  const statusCandidate = String(statusRaw ?? "").trim().toLowerCase();
-  const status: ProductStatus =
-    statusCandidate === "в наявності" || statusCandidate === "під замовлення"
-      ? (statusCandidate as ProductStatus)
-      : "під замовлення";
+//   const statusCandidate = String(statusRaw ?? "").trim().toLowerCase();
+//   const status: ProductStatus =
+//     statusCandidate === "в наявності" || statusCandidate === "під замовлення"
+//       ? (statusCandidate as ProductStatus)
+//       : "під замовлення";
 
   
-  const imagesInput = String(imagesRaw ?? "").trim();
-  let images: string[] = [];
+//   const imagesInput = String(imagesRaw ?? "").trim();
+//   let images: string[] = [];
 
-  if (imagesInput) {
-    if (imagesInput.startsWith("[")) {
+//   if (imagesInput) {
+//     if (imagesInput.startsWith("[")) {
       
-      try {
-        const parsed = JSON.parse(imagesInput);
-        if (!Array.isArray(parsed)) throw new Error();
-        images = parsed
-          .map((x) => String(x ?? "").trim())
-          .filter(Boolean);
-      } catch {
-        throw new Error("Images must be a valid JSON array of URLs");
-      }
-    } else {
+//       try {
+//         const parsed = JSON.parse(imagesInput);
+//         if (!Array.isArray(parsed)) throw new Error();
+//         images = parsed
+//           .map((x) => String(x ?? "").trim())
+//           .filter(Boolean);
+//       } catch {
+//         throw new Error("Images must be a valid JSON array of URLs");
+//       }
+//     } else {
       
-      images = imagesInput
-        .split(/\r?\n/)
-        .map((l) => l.trim())
-        .filter(Boolean);
-    }
-  }
+//       images = imagesInput
+//         .split(/\r?\n/)
+//         .map((l) => l.trim())
+//         .filter(Boolean);
+//     }
+//   }
 
-  if (images.length > 12) throw new Error("Too many images (max 12)");
+//   if (images.length > 12) throw new Error("Too many images (max 12)");
 
 
-  const optionsInput = String(optionsRaw ?? "").trim();
-  let options: Array<{ name: string; price: number }> | null = null;
+//   const optionsInput = String(optionsRaw ?? "").trim();
+//   let options: Array<{ name: string; price: number }> | null = null;
 
-  if (optionsInput) {
-    try {
-      const parsed = JSON.parse(optionsInput);
-      if (!Array.isArray(parsed)) throw new Error();
-      options = parsed.map((opt) => {
-        const optName = String(opt?.name ?? "").trim();
-        const optPrice = Number(opt?.price);
-        if (!optName) throw new Error("Option name is required");
-        if (!Number.isFinite(optPrice) || optPrice < 0) throw new Error("Invalid option price");
-        return { name: optName, price: Math.round(optPrice) };
-      });
-    } catch (e) {
-      throw new Error(
-        e instanceof Error ? e.message : "Options must be valid JSON array"
-      );
-    }
-  }
+//   if (optionsInput) {
+//     try {
+//       const parsed = JSON.parse(optionsInput);
+//       if (!Array.isArray(parsed)) throw new Error();
+//       options = parsed.map((opt) => {
+//         const optName = String(opt?.name ?? "").trim();
+//         const optPrice = Number(opt?.price);
+//         if (!optName) throw new Error("Option name is required");
+//         if (!Number.isFinite(optPrice) || optPrice < 0) throw new Error("Invalid option price");
+//         return { name: optName, price: Math.round(optPrice) };
+//       });
+//     } catch (e) {
+//       throw new Error(
+//         e instanceof Error ? e.message : "Options must be valid JSON array"
+//       );
+//     }
+//   }
 
+//   const supabase = await createSupabaseServerClient();
+//   const {
+//     data: { user },
+//     error: userError,
+//   } = await supabase.auth.getUser();
+
+//   if (userError) throw new Error(userError.message);
+//   if (!user) throw new Error("Not authenticated");
+
+
+//   const { error } = await supabase.from("products").insert({
+//     name,
+//     description,
+//     price,
+//     category,
+//     status,
+//     images: images.length ? images : null,
+//     options,
+//   });
+
+//   if (error) throw new Error(error.message);
+//   revalidatePath("/admin");
+// }
+export async function createProductDraft() {
   const supabase = await createSupabaseServerClient();
+
   const {
     data: { user },
     error: userError,
@@ -355,19 +399,24 @@ export async function createProduct(formData: FormData) {
   if (userError) throw new Error(userError.message);
   if (!user) throw new Error("Not authenticated");
 
-
-  const { error } = await supabase.from("products").insert({
-    name,
-    description,
-    price,
-    category,
-    status,
-    images: images.length ? images : null,
-    options,
-  });
+  // ✅ дефолты, которые проходят NOT NULL и валидаторы
+  const { data, error } = await supabase
+    .from("products")
+    .insert({
+      name: "New product",
+      description: "—",      // чтобы не было пусто
+      price: 1,              // минимально валидное число
+      category: "clocks",    // выбери любую дефолтную категорию из твоих
+      status: "під замовлення",
+      options: null,
+    })
+    .select("id")
+    .single();
 
   if (error) throw new Error(error.message);
+
   revalidatePath("/admin");
+  redirect(`/admin/products/${data.id}/edit`);
 }
 
 export async function saveProductOptions(formData: FormData) {

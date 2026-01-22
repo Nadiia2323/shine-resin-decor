@@ -1,13 +1,18 @@
 "use client";
-import React from "react";
+
 import { AdminClientProps } from "@/types";
 import Image from "next/image";
-import { toggleStatus, updateCategory, updateName } from "../actions";
+import {
+  deleteProduct,
+  toggleStatus,
+  updateCategory,
+  updateName,
+} from "../actions";
 import PriceCell from "./PriceCell";
-// import CategoryCell from "./CategoryCell";
 import Link from "next/link";
 import InlineEditField from "./InLineEditField";
 import InlineEditSelect from "./InLineEditSelect";
+import { DeleteButton } from "./DeleteButton";
 
 export default function ProductsTable({
   products,
@@ -27,6 +32,7 @@ export default function ProductsTable({
 
       <tbody className="divide-y divide-slate-100">
         {products?.map((p) => {
+          console.log("product_images :>> ", p.product_images);
           const statusBase =
             "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold tracking-wide";
           const statusClass =
@@ -35,10 +41,12 @@ export default function ProductsTable({
               : p.status === "під замовлення"
                 ? "bg-amber-100 text-amber-700"
                 : "bg-slate-200 text-slate-700";
-          const mainImage =
-            p.product_images?.length > 0
-              ? p.product_images[0].url
-              : "/placeholder.png";
+          const mainImageUrl =
+            p.product_images?.find((img) => img.is_main)?.url ??
+            [...(p.product_images ?? [])].sort(
+              (a, b) => (a.position ?? 0) - (b.position ?? 0),
+            )[0]?.url ??
+            "https://res.cloudinary.com/dqgvmwnpl/image/upload/v1761499510/resin-shop/2459195_s9xnwq.jpg";
 
           return (
             <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
@@ -46,7 +54,7 @@ export default function ProductsTable({
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
                     <Image
-                      src={mainImage}
+                      src={mainImageUrl}
                       alt=""
                       className="h-full w-full object-cover"
                       width={48}
@@ -77,12 +85,6 @@ export default function ProductsTable({
                   selectClassName="inline-flex items-center rounded-full bg-cyan-50 text-cyan-700 px-2 py-0.5 text-xs font-semibold"
                 />
               </td>
-
-              {/* <CategoryCell
-                id={p.id}
-                category={p.category}
-                categories={categories}
-              /> */}
 
               <td className="px-5 py-4">
                 <form action={toggleStatus}>
@@ -125,12 +127,10 @@ export default function ProductsTable({
                   >
                     Edit
                   </Link>
-                  <button
-                    className="rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700
-                                   hover:bg-red-100 active:scale-[0.98] transition"
-                  >
-                    Delete
-                  </button>
+                  <form action={deleteProduct}>
+                    <input type="hidden" name="id" value={p.id} />
+                    <DeleteButton />
+                  </form>
                 </div>
               </td>
             </tr>

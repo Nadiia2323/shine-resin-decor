@@ -89,6 +89,7 @@ export type ProductImage = {
   url: string;
   public_id: string;
   position: number;
+  is_main: boolean;
 };
 
 export type AdminEditClientProps = {

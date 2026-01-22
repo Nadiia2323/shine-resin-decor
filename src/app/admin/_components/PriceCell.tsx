@@ -9,33 +9,42 @@ export default function PriceCell({ id, price }: PriceCellProps) {
   const formRef = useRef<HTMLFormElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
-  const original = price ?? null;
+  const originalNum =
+    typeof price === "number" ? price : Number(String(price ?? "").trim());
+  const hasOriginal = Number.isFinite(originalNum);
 
   const action = async (formData: FormData) => {
     await updatePrice(formData);
     startTransition(() => router.refresh());
   };
 
-  const submitIfChanged = () => {
+  const revert = () => {
     const el = inputRef.current;
     if (!el) return;
+    el.value = hasOriginal ? String(originalNum) : "";
+  };
+
+  const submitIfChanged = () => {
+    const el = inputRef.current;
+    if (!el || isPending) return;
 
     const raw = el.value.trim();
+
     if (raw === "") {
-      el.value = original === null ? "" : String(original);
+      revert();
       return;
     }
 
     const next = Number(raw);
 
     if (!Number.isFinite(next) || next <= 0) {
-      el.value = original === null ? "" : String(original);
+      revert();
       return;
     }
 
-    if (original !== null && next === original) return;
+    if (hasOriginal && next === originalNum) return;
 
     formRef.current?.requestSubmit();
   };
@@ -50,8 +59,12 @@ export default function PriceCell({ id, price }: PriceCellProps) {
         type="number"
         min={1}
         step={1}
-        defaultValue={price ?? ""}
+        inputMode="numeric"
+        pattern="[0-9]*"
+        defaultValue={hasOriginal ? originalNum : ""}
         placeholder="—"
+        disabled={isPending}
+        aria-busy={isPending}
         onBlur={submitIfChanged}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
@@ -60,17 +73,15 @@ export default function PriceCell({ id, price }: PriceCellProps) {
           }
           if (e.key === "Escape") {
             e.preventDefault();
-            if (inputRef.current) {
-              inputRef.current.value =
-                original === null ? "" : String(original);
-              inputRef.current.blur();
-            }
+            revert();
+            inputRef.current?.blur();
           }
         }}
-        className="
-          w-28 text-right rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900
+        className={`
+          w-24 sm:w-28 text-right rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-900
           outline-none focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100
-        "
+          disabled:opacity-60 disabled:bg-slate-50
+        `}
       />
 
       <button
