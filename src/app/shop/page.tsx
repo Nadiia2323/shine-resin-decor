@@ -3,7 +3,26 @@ import PageClient from "./PageClient";
 import { supabase } from "@/lib/supabase-client";
 
 export default async function Page() {
-  const { data: products } = await supabase.from("products").select("*");
+ const { data:products} = await supabase
+    .from("products")
+    .select(`
+      *,
+      product_images (
+        url,
+        is_main,
+        position
+      )
+    `)
+    .order("is_main", {
+      referencedTable: "product_images",
+      ascending: false,
+    })
+    // .order("position", {
+    //   referencedTable: "product_images",
+    //   ascending: true,
+    // });
+ 
+
   const { data: categoriesData } = await supabase
     .from("products")
     .select("category");

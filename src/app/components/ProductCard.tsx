@@ -17,9 +17,8 @@ export default function ProductCard({ products }: ProductCardProps) {
   };
   return (
     <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
-      {products?.map(({ status, id, name, price, images }) => {
-        const mainImage =
-          images && images.length > 0 ? images[0] : "/placeholder.png";
+      {products?.map(({ status, id, name, price, product_images }) => {
+        const mainImage = product_images?.[0]?.url ?? "/placeholder.png";
 
         return (
           <Link

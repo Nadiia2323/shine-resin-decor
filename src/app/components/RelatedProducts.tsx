@@ -7,6 +7,7 @@ import { RelatedProductsProps } from "@/types";
 export default function RelatedProducts({
   relatedProducts,
 }: RelatedProductsProps) {
+  console.log("relatedProducts :>> ", relatedProducts);
   if (!relatedProducts || relatedProducts.length === 0) return null;
 
   return (
@@ -17,10 +18,8 @@ export default function RelatedProducts({
 
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
         {relatedProducts.map((item) => {
-          const mainImage =
-            item.images && item.images.length > 0
-              ? item.images[0]
-              : "/placeholder.png";
+          console.log("item :>> ", item);
+          const mainImage = item.product_images?.[0]?.url ?? "/placeholder.png";
 
           return (
             <Link

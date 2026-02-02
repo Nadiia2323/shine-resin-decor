@@ -20,11 +20,11 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
     .select(
       `
       *,
-      product_images (id,url,public_id,position)
+      product_images (id,url,public_id,position,is_main)
     `,
     )
     .eq("id", productId)
-    .order("position", { foreignTable: "product_images", ascending: true })
+    .order("position", { referencedTable: "product_images", ascending: true })
     .single();
 
   if (!product) {
@@ -32,16 +32,33 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
   }
 
   const images = product.product_images ?? [];
-  console.log("images :>> ", images);
-
-  const { data: categories } = await supabase
+  const { data: relatedRaw } = await supabase
     .from("products")
-    .select("*")
-    .eq("category", product.category);
+    .select(
+      `
+      id,
+      name,
+      price,
+      status,
+      category,
+      product_images (url,position,is_main)
+    `,
+    )
+    .eq("category", product.category)
+    .neq("id", product.id)
+    .order("is_main", { referencedTable: "product_images", ascending: false })
+    .limit(4);
 
-  const relatedProducts = (categories ?? [])
-    .filter((item) => item.id !== product.id)
-    .slice(0, 4);
+  console.log("relatedRaw :>> ", relatedRaw);
+
+  // const { data: categories } = await supabase
+  //   .from("products")
+  //   .select("*")
+  //   .eq("category", product.category);
+
+  // const relatedProducts = (categories ?? [])
+  //   .filter((item) => item.id !== product.id)
+  //   .slice(0, 4);
 
   const getStatusBadgeClasses = (status?: string) => {
     const base =
@@ -125,7 +142,7 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
         </div>
       </section>
 
-      <RelatedProducts relatedProducts={relatedProducts} />
+      <RelatedProducts relatedProducts={relatedRaw} />
     </main>
   );
 }
