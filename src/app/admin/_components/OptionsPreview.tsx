@@ -1,18 +1,18 @@
 import React from "react";
-
 import { ProductOption } from "@/types";
 
-export default function OptionsPreview({
-  options,
-}: {
+type Props = {
   options?: ProductOption[] | null;
-}) {
+  title: string;
+};
+
+export default function OptionsPreview({ options, title }: Props) {
   if (!options || options.length === 0) return null;
 
   return (
     <div className="mt-3 space-y-2">
       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-        Extras
+        {title}
       </p>
 
       <div className="flex flex-wrap gap-2">

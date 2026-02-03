@@ -3,32 +3,29 @@ import PageClient from "./PageClient";
 import { supabase } from "@/lib/supabase-client";
 
 export default async function Page() {
- const { data:products} = await supabase
+  const { data: products } = await supabase
     .from("products")
-    .select(`
+    .select(
+      `
       *,
       product_images (
         url,
         is_main,
         position
       )
-    `)
+    `,
+    )
     .order("is_main", {
       referencedTable: "product_images",
       ascending: false,
-    })
-    // .order("position", {
-    //   referencedTable: "product_images",
-    //   ascending: true,
-    // });
- 
+    });
 
   const { data: categoriesData } = await supabase
     .from("products")
     .select("category");
 
   const uniqueCategories = Array.from(
-    new Set(categoriesData?.map((p) => p.category).filter(Boolean))
+    new Set(categoriesData?.map((p) => p.category).filter(Boolean)),
   );
 
   const categories = ["All", ...uniqueCategories];
@@ -57,7 +54,7 @@ export default async function Page() {
           Ми можемо створити виріб спеціально для вас 💛
         </p>
         <a
-          href="https://t.me/your_telegram_username"
+          href="https://t.me/evd_kriss"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-slate-800 text-white text-lg font-semibold px-8 py-3 rounded-full hover:bg-slate-700 transition-transform transform hover:scale-105"

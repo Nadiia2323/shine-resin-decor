@@ -5,25 +5,26 @@ import Link from "next/link";
 export default function Navigation() {
   return (
     <nav className="fixed top-0 left-0 w-full z-20 bg-white/10 backdrop-blur-md border-b border-white/20">
-      <div className="flex justify-between items-center px-10 py-2">
-        <div className="flex items-center gap-3">
-          <Image
-            src="https://res.cloudinary.com/dqgvmwnpl/image/upload/v1759690939/posts/1500648_ukb9dp.svg"
-            alt="Ukraine"
-            width={40}
-            height={40}
-            className="drop-shadow-md"
-          />
-          <div>
-            <h1 className="text-white text-3xl font-bold tracking-wide leading-tight">
-              Shine
-            </h1>
-            <p className="text-sm text-cyan-200 uppercase tracking-widest">
-              resin decor
-            </p>
+      <div className="flex justify-between items-center px-10 py-2 ">
+        <Link href="/" className="cursor-pointer">
+          <div className="flex items-center gap-3">
+            <Image
+              src="https://res.cloudinary.com/dqgvmwnpl/image/upload/v1759690939/posts/1500648_ukb9dp.svg"
+              alt="Ukraine"
+              width={40}
+              height={40}
+              className="drop-shadow-md"
+            />
+            <div>
+              <h1 className="text-white text-3xl font-bold tracking-wide leading-tight">
+                Shine
+              </h1>
+              <p className="text-sm text-cyan-200 uppercase tracking-widest">
+                resin decor
+              </p>
+            </div>
           </div>
-        </div>
-
+        </Link>
         <div className="flex items-center space-x-10 text-white font-medium">
           <Link href="/" className="hover:text-cyan-300 transition-colors">
             Головна

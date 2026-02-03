@@ -5,14 +5,17 @@ import Link from "next/link";
 import ProductGallery from "@/app/components/ProductGallery";
 import RelatedProducts from "@/app/components/RelatedProducts";
 import { notFound } from "next/navigation";
+import OptionsPreview from "@/app/admin/_components/OptionsPreview";
 
 export default async function Page({ params, searchParams }: ProductPageProps) {
   const { id } = await params;
   const sp = await searchParams;
   const from = sp?.from;
   const backHref = from === "admin" ? "/admin" : "/shop";
+
   const productId = Number(id);
   if (!Number.isFinite(productId)) notFound();
+
   const supabase = await createSupabaseServerClient();
 
   const { data: product } = await supabase
@@ -27,11 +30,10 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
     .order("position", { referencedTable: "product_images", ascending: true })
     .single();
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
   const images = product.product_images ?? [];
+
   const { data: relatedRaw } = await supabase
     .from("products")
     .select(
@@ -49,17 +51,6 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
     .order("is_main", { referencedTable: "product_images", ascending: false })
     .limit(4);
 
-  console.log("relatedRaw :>> ", relatedRaw);
-
-  // const { data: categories } = await supabase
-  //   .from("products")
-  //   .select("*")
-  //   .eq("category", product.category);
-
-  // const relatedProducts = (categories ?? [])
-  //   .filter((item) => item.id !== product.id)
-  //   .slice(0, 4);
-
   const getStatusBadgeClasses = (status?: string) => {
     const base =
       "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide w-fit";
@@ -69,33 +60,27 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
       "під замовлення": "bg-amber-100 text-amber-700",
     };
 
-    const fallback = "bg-slate-200 text-slate-700";
-
-    const variant = variants[status ?? ""] ?? fallback;
-
-    return `${base} ${variant}`;
+    return `${base} ${variants[status ?? ""] ?? "bg-slate-200 text-slate-700"}`;
   };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-400 via-slate-100 to-slate-200">
       <Navigation />
 
-      <section className="flex flex-row space-x-4 mx-auto px-6 py-20">
-        <div className="flex items-center justify-center">
-          <Link
-            href={backHref}
-            className="inline-flex text-right text-sm text-slate-700 hover:text-slate-900"
-          >
-            ← Назад
-          </Link>
-        </div>
+      <section className="mx-auto px-6 py-20 max-w-7xl">
+        <Link
+          href={backHref}
+          className="inline-flex mb-6 text-sm text-slate-700 hover:text-slate-900"
+        >
+          ← Назад
+        </Link>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/70 px-4 py-6 sm:px-8 sm:py-10 grid gap-6 md:grid-cols-2 items-start">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-slate-200/70 px-4 py-6 sm:px-8 sm:py-10 grid gap-8 md:grid-cols-2 items-start">
           <ProductGallery images={images} name={product.name} />
 
           <div className="flex flex-col gap-5">
             {product.category && (
-              <span className="inline-flex items-center rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold px-3 py-1 uppercase tracking-wide w-fit">
+              <span className="inline-flex w-fit rounded-full bg-cyan-100 text-cyan-700 text-xs font-semibold px-3 py-1 uppercase tracking-wide">
                 {product.category}
               </span>
             )}
@@ -103,6 +88,7 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               {product.name}
             </h1>
+
             <span className={getStatusBadgeClasses(product.status)}>
               {product.status}
             </span>
@@ -112,37 +98,47 @@ export default async function Page({ params, searchParams }: ProductPageProps) {
             </p>
 
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Унікальний виріб з епоксидної смоли, створений вручну з любовʼю.
-              Кожен елемент – це маленький витвір мистецтва, який стане акцентом
-              у вашому інтерʼєрі або особливим подарунком.
+              {product.description}
             </p>
 
-            <div className="mt-4 flex flex-wrap gap-3">
+            {product.options?.length > 0 && (
+              <div className="rounded-2xl bg-slate-50/80 border border-slate-200 px-4 py-3">
+                <OptionsPreview
+                  options={product.options}
+                  title="Додаються за бажанням"
+                />
+              </div>
+            )}
+
+            <div className="mt-5 flex flex-wrap gap-3">
               <a
-                href="https://t.me/your_telegram_username"
+                href="https://t.me/evd_kriss"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full bg-slate-900 text-white px-6 py-2.5 text-sm font-semibold shadow-lg hover:bg-slate-800 transition-transform hover:scale-105"
               >
                 Замовити в Telegram
               </a>
-              <button
-                type="button"
+
+              <a
+                href="https://t.me/evd_kriss"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-800 hover:bg-slate-100 transition-colors"
               >
                 Поставити запитання
-              </button>
+              </a>
             </div>
 
-            <p className="text-xs text-slate-500 mt-2">
-              Якщо ви мрієте про індивідуальний дизайн, напишіть нам – ми з
+            <p className="text-xs text-slate-500">
+              Якщо ви мрієте про індивідуальний дизайн, напишіть нам — ми з
               радістю створимо щось саме для вас ✨
             </p>
           </div>
         </div>
       </section>
 
-      <RelatedProducts relatedProducts={relatedRaw} />
+      <RelatedProducts relatedProducts={relatedRaw ?? []} />
     </main>
   );
 }

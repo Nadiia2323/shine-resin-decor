@@ -5,11 +5,10 @@ export type Product = {
   images: string[];
   category: string;
   status?: string | null;
-  description?: string
-  options: ProductOption[] | null
-  product_images: ProductImage[]
+  description?: string;
+  options: ProductOption[] | null;
+  product_images: ProductImage[] | null;
 };
-
 
 export type Category = {
   name: string;
@@ -19,7 +18,7 @@ export type User = {
   id: string;
   email: string;
 };
- 
+
 export type PageClientProps = {
   categories: string[];
   products: Product[];
@@ -38,47 +37,53 @@ export type ProductPageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
+export type RelatedProductRaw = {
+  id: number;
+  name: string;
+  price: number;
+  status?: string;
+  category?: string;
+  product_images?: {
+    id?: number;
+    url: string;
+    position?: number;
+    is_main?: boolean;
+    public_id?: string;
+  }[];
+};
 
 export type RelatedProductsProps = {
- relatedProducts: Product[]
-}
+  relatedProducts: RelatedProductRaw[];
+};
 export type ProductStatus = "в наявності" | "під замовлення";
 
-
-// export type AdminClientProps = {
-//   products: AdminProduct[];
-//   categories: string[]
-// };
 export type PriceCellProps = {
   id: number;
   price: number | null;
 };
-
-
 
 export type ProductOption = {
   name: string;
   price: number | null;
 };
 
-
 export type AdminProduct = {
   id: number;
   name: string | null;
-  price: number | null ;
+  price: number | null;
   status?: string | null;
   category: string | null;
   description: string | null;
   product_images: ProductImage[];
-  options: ProductOption[]
+  options: ProductOption[];
 };
 export type PreviewFormProps = {
-  product: Product
-}
+  product: Product;
+};
 
 export type AdminPageProps = {
   products: AdminProduct[];
-  categories?: string[]; 
+  categories?: string[];
 };
 
 export type AdminClientProps = AdminPageProps;
@@ -99,21 +104,18 @@ export type AdminEditClientProps = {
   product: Product;
 };
 
-
-
-export type EditFormProps = { product: Product; categories?: string[] }
+export type EditFormProps = { product: Product; categories?: string[] };
 export type InlineEditFieldProps = {
   id: number | string;
-  name: string; 
+  name: string;
   defaultValue: string;
-  action: (formData: FormData) => Promise<void>; 
-  type?: React.HTMLInputTypeAttribute; 
+  action: (formData: FormData) => Promise<void>;
+  type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
   inputClassName?: string;
   formClassName?: string;
   wrapperClassName?: string;
 
-  
   label?: string;
   meta?: React.ReactNode;
 };

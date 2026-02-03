@@ -106,7 +106,7 @@ export default function PreviewForm({ product }: PreviewFormProps) {
             </p>
           </div>
 
-          <OptionsPreview options={product.options} />
+          <OptionsPreview options={product.options} title="Extras" />
         </div>
       </div>
     </>

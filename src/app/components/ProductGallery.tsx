@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import NoImagePlaceholder from "./NoImagePlaceholder";
 
 type ProductImage = {
   id: number;
   url: string;
   public_id: string;
   position: number;
+  is_main: boolean;
 };
 
 type ProductGalleryProps = {
@@ -19,21 +21,28 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const hasImages = images.length > 0;
-  const mainImage = hasImages ? images[activeIndex]?.url : "/placeholder.png";
+  const mainImage = hasImages ? images[activeIndex]?.url : null;
 
   useEffect(() => {
-    setActiveIndex(0);
+    if (!images || images.length === 0) return;
+
+    const mainIndex = images.findIndex((img) => img.is_main);
+    setActiveIndex(mainIndex !== -1 ? mainIndex : 0);
   }, [images]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-slate-100">
-        <Image
-          src={mainImage}
-          alt={name}
-          fill
-          className="object-cover transition-transform duration-500 hover:scale-105"
-        />
+        {mainImage ? (
+          <Image
+            src={mainImage}
+            alt={name}
+            fill
+            className="object-cover transition-transform duration-500 hover:scale-105"
+          />
+        ) : (
+          <NoImagePlaceholder size="lg" />
+        )}
       </div>
 
       {hasImages && images.length > 1 && (
