@@ -26,11 +26,12 @@ export default async function AdminEditPage({ params }: PageProps) {
     .select(
       `
       *,
-      product_images (id,url,public_id,position)
+      product_images (id,url,public_id,position,is_main)
     `,
     )
     .eq("id", productId)
-    .order("position", { foreignTable: "product_images", ascending: true })
+    .order("is_main", { referencedTable: "product_images", ascending: false })
+    .order("position", { referencedTable: "product_images", ascending: true })
     .single();
 
   if (productError) {

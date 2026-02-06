@@ -1,8 +1,10 @@
 import Navigation from "../components/Navigation";
 import PageClient from "./PageClient";
-import { supabase } from "@/lib/supabase-client";
+import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export default async function Page() {
+  const supabase = await createSupabaseServerClient();
+
   const { data: products } = await supabase
     .from("products")
     .select(
@@ -15,14 +17,16 @@ export default async function Page() {
       )
     `,
     )
-    .order("is_main", {
-      referencedTable: "product_images",
-      ascending: false,
-    });
+    .order("created_at", { ascending: false })
+    .order("is_main", { referencedTable: "product_images", ascending: false })
+    .order("position", { referencedTable: "product_images", ascending: true })
+    .limit(40);
 
   const { data: categoriesData } = await supabase
     .from("products")
-    .select("category");
+    .select("category")
+    .neq("category", null)
+    .order("category", { ascending: true });
 
   const uniqueCategories = Array.from(
     new Set(categoriesData?.map((p) => p.category).filter(Boolean)),

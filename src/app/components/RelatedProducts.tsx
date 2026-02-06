@@ -9,7 +9,6 @@ export default function RelatedProducts({
   relatedProducts,
 }: RelatedProductsProps) {
   if (!relatedProducts || relatedProducts.length === 0) return null;
-  console.log("relatedProducts :>> ", relatedProducts);
   const getMainImage = (images?: { url: string; is_main?: boolean }[]) =>
     images?.find((img) => img.is_main)?.url ?? images?.[0]?.url ?? null;
 

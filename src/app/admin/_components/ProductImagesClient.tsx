@@ -2,26 +2,49 @@
 
 import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import imageCompression from "browser-image-compression";
 import type { NewImage, ProductImage } from "@/types";
 
 type ProductImagesClientProps = {
   productId: number;
-  initialImages: ProductImage[];
+  initialImages?: ProductImage[] | null;
   maxImages?: number;
 };
 
 type ApiImagesResponse = { images: ProductImage[] };
+
+const MAX_MB = 10;
+const MAX_BYTES = MAX_MB * 1024 * 1024;
 
 async function fetchJson<T>(
   input: RequestInfo,
   init?: RequestInit,
 ): Promise<T> {
   const res = await fetch(input, init);
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `Request failed (${res.status})`);
-  }
-  return (await res.json()) as T;
+  const text = await res.text().catch(() => "");
+  if (!res.ok) throw new Error(text || `Request failed (${res.status})`);
+  return (text ? JSON.parse(text) : {}) as T;
+}
+
+async function compressIfNeeded(file: File): Promise<File> {
+  if (file.size <= MAX_BYTES) return file;
+
+  const options = {
+    maxSizeMB: 9.5,
+    maxWidthOrHeight: 2400,
+    useWebWorker: true,
+    initialQuality: 0.85,
+  };
+
+  const compressed = await imageCompression(file, options);
+  if (compressed.size <= MAX_BYTES) return compressed;
+
+  return imageCompression(file, {
+    ...options,
+    maxSizeMB: 8,
+    maxWidthOrHeight: 2000,
+    initialQuality: 0.75,
+  });
 }
 
 export default function ProductImagesClient({
@@ -29,24 +52,29 @@ export default function ProductImagesClient({
   initialImages,
   maxImages = 4,
 }: ProductImagesClientProps) {
-  const [images, setImages] = useState<ProductImage[]>(initialImages);
+  const [images, setImages] = useState<ProductImage[]>(
+    Array.isArray(initialImages) ? initialImages : [],
+  );
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const sortedImages = useMemo(
-    () => [...images].sort((a, b) => (a.position ?? 0) - (b.position ?? 0)),
-    [images],
-  );
+  const sortedImages = useMemo(() => {
+    const list = Array.isArray(images) ? images : [];
+    return [...list].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  }, [images]);
 
-  const emptySlots = Math.max(0, maxImages - images.length);
+  const emptySlots = Math.max(0, maxImages - sortedImages.length);
 
-  const clearError = () => setErrorMsg(null);
+  const clearInput = () => {
+    if (inputRef.current) inputRef.current.value = "";
+  };
 
   async function uploadFiles(files: FileList | null) {
     if (!files || loading) return;
 
     const picked = Array.from(files).slice(0, emptySlots);
+    clearInput();
     if (!picked.length) return;
 
     setLoading(true);
@@ -62,7 +90,18 @@ export default function ProductImagesClient({
       }>(`/api/admin/products/${productId}/cloudinary-signature`);
 
       const uploaded: NewImage[] = [];
-      for (const file of picked) {
+
+      for (const rawFile of picked) {
+        const file = await compressIfNeeded(rawFile);
+
+        if (file.size > MAX_BYTES) {
+          throw new Error(
+            `Файл завеликий (${(file.size / 1024 / 1024).toFixed(
+              1,
+            )} MB). Максимум ${MAX_MB} MB.`,
+          );
+        }
+
         const form = new FormData();
         form.append("file", file);
         form.append("api_key", sig.apiKey);
@@ -74,10 +113,19 @@ export default function ProductImagesClient({
           `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`,
           { method: "POST", body: form },
         );
-        if (!cloudRes.ok) throw new Error("Cloudinary upload failed");
 
-        const json = await cloudRes.json();
-        uploaded.push({ url: json.secure_url, public_id: json.public_id });
+        const cloudJson = await cloudRes.json().catch(() => null);
+        if (!cloudRes.ok) {
+          throw new Error(
+            cloudJson?.error?.message ||
+              `Cloudinary upload failed (${cloudRes.status})`,
+          );
+        }
+
+        uploaded.push({
+          url: cloudJson.secure_url,
+          public_id: cloudJson.public_id,
+        });
       }
 
       const data = await fetchJson<ApiImagesResponse>(
@@ -89,13 +137,12 @@ export default function ProductImagesClient({
         },
       );
 
-      setImages(data.images);
+      setImages(Array.isArray(data.images) ? data.images : []);
     } catch (e) {
-      console.error(e);
       setErrorMsg(e instanceof Error ? e.message : "Upload failed");
     } finally {
       setLoading(false);
-      if (inputRef.current) inputRef.current.value = "";
+      clearInput();
     }
   }
 
@@ -105,17 +152,16 @@ export default function ProductImagesClient({
     setLoading(true);
     setErrorMsg(null);
 
-    const prev = images;
-    setImages((cur) => cur.filter((img) => img.id !== imageId));
+    const prev = Array.isArray(images) ? images : [];
+    setImages(prev.filter((img) => img.id !== imageId));
 
     try {
       const data = await fetchJson<ApiImagesResponse>(
         `/api/admin/products/${productId}/images/${imageId}`,
         { method: "DELETE" },
       );
-      setImages(data.images);
+      setImages(Array.isArray(data.images) ? data.images : []);
     } catch (e) {
-      console.error(e);
       setImages(prev);
       setErrorMsg(e instanceof Error ? e.message : "Delete failed");
     } finally {
@@ -129,19 +175,16 @@ export default function ProductImagesClient({
     setLoading(true);
     setErrorMsg(null);
 
-    const prev = images;
-    setImages((cur) =>
-      cur.map((img) => ({ ...img, is_main: img.id === imageId })),
-    );
+    const prev = Array.isArray(images) ? images : [];
+    setImages(prev.map((img) => ({ ...img, is_main: img.id === imageId })));
 
     try {
       const data = await fetchJson<ApiImagesResponse>(
         `/api/admin/products/${productId}/images/${imageId}/main`,
         { method: "PATCH" },
       );
-      setImages(data.images);
+      setImages(Array.isArray(data.images) ? data.images : []);
     } catch (e) {
-      console.error(e);
       setImages(prev);
       setErrorMsg(e instanceof Error ? e.message : "Make main failed");
     } finally {
@@ -156,11 +199,9 @@ export default function ProductImagesClient({
           Images
         </p>
 
-        <div className="flex items-center gap-3">
-          <p className="text-xs text-slate-500">
-            {images.length}/{maxImages}
-          </p>
-        </div>
+        <p className="text-xs text-slate-500">
+          {sortedImages.length}/{maxImages}
+        </p>
       </div>
 
       {errorMsg && (
@@ -169,7 +210,7 @@ export default function ProductImagesClient({
             <p className="min-w-0 break-words">{errorMsg}</p>
             <button
               type="button"
-              onClick={clearError}
+              onClick={() => setErrorMsg(null)}
               className="text-xs font-semibold text-red-700 hover:opacity-80"
             >
               Close
@@ -196,8 +237,7 @@ export default function ProductImagesClient({
               type="button"
               disabled={loading || img.is_main}
               onClick={() => makeMain(img.id)}
-              className="
-                absolute left-1 bottom-1 rounded-full bg-white/90  px-2 py-0.5 text-[11px] font-semibold text-slate-700 hover:bg-white disabled:opacity-60"
+              className="absolute left-1 bottom-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-slate-700 hover:bg-white disabled:opacity-60"
             >
               {img.is_main ? "Main" : "Set main"}
             </button>
@@ -206,7 +246,7 @@ export default function ProductImagesClient({
               type="button"
               disabled={loading}
               onClick={() => deleteImage(img.id)}
-              className="absolute top-1 right-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-slate-700 hover:bg-white disabled:opacity-60 "
+              className="absolute top-1 right-1 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-slate-700 hover:bg-white disabled:opacity-60"
               aria-label="Delete image"
               title="Delete"
             >
@@ -232,15 +272,20 @@ export default function ProductImagesClient({
         onChange={(e) => uploadFiles(e.target.files)}
       />
 
-      <button
-        type="button"
-        disabled={loading || images.length >= maxImages}
-        onClick={() => inputRef.current?.click()}
-        className="
-          w-full sm:w-auto rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.98] transition disabled:opacity-50"
-      >
-        {loading ? "Uploading…" : "Upload images"}
-      </button>
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          disabled={loading || sortedImages.length >= maxImages}
+          onClick={() => inputRef.current?.click()}
+          className="w-full sm:w-auto rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.98] transition disabled:opacity-50"
+        >
+          {loading ? "Uploading…" : "Upload images"}
+        </button>
+
+        <p className="text-xs text-slate-500">
+          Фото стискаються автоматично. Максимальний розмір файлу: {MAX_MB} MB.
+        </p>
+      </div>
     </div>
   );
 }

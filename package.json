@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.76.0",
+    "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.9.0",
     "framer-motion": "^12.23.22",
     "next": "^16.0.10",
