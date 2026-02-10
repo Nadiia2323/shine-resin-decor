@@ -4,6 +4,7 @@ import {
   LightBulbIcon,
   GlobeAsiaAustraliaIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -39,7 +40,13 @@ export default function Footer() {
       </div>
 
       <div className="text-center text-gray-300 text-sm mt-8">
-        © 2025 shine.resin_decor — Всі права захищено.
+        <p>© 2025 shine.resin_decor — Всі права захищено.</p>
+        <Link
+          href="/privacy"
+          className="underline underline-offset-4 hover:text-white transition"
+        >
+          Політика конфіденційності
+        </Link>
       </div>
     </footer>
   );

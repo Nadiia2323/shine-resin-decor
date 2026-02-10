@@ -17,7 +17,7 @@ export default function ProductCard({ products }: ProductCardProps) {
   };
 
   return (
-    <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
       {products?.map(({ status, id, name, price, product_images }) => {
         const mainImage =
           product_images?.find((img) => img.is_main)?.url ??
@@ -28,32 +28,44 @@ export default function ProductCard({ products }: ProductCardProps) {
           <Link
             href={`/shop/${id}`}
             key={id}
-            className="bg-white w-72 rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            className="group bg-white w-full rounded-2xl shadow-sm overflow-hidden border border-slate-100 transition
+                       hover:shadow-lg hover:-translate-y-0.5"
           >
-            <div className="relative w-full h-64 bg-slate-100">
+            <div className="relative w-full aspect-[4/3] bg-slate-100">
               {mainImage ? (
                 <Image
                   src={mainImage}
-                  alt={name}
+                  alt={name ?? "Product"}
                   fill
-                  unoptimized
-                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               ) : (
-                <NoImagePlaceholder size="md" />
+                <NoImagePlaceholder size="md" label="" />
               )}
             </div>
 
-            <div className="p-4 text-center">
+            <div className="p-3 sm:p-4 text-center">
               {status && (
                 <span className={getStatusBadgeClass(status)}>{status}</span>
               )}
-              <h3 className="text-lg font-semibold text-slate-700">{name}</h3>
-              <p className="text-slate-500 mb-4">{price} ₴</p>
 
-              <button className="bg-slate-800 text-white px-6 py-2 rounded-full text-sm hover:bg-slate-700 transition-all">
-                Переглянути
-              </button>
+              <h3 className="text-sm sm:text-lg font-semibold text-slate-700 line-clamp-2">
+                {name}
+              </h3>
+
+              <p className="text-slate-500 mt-1 mb-3 sm:mb-4 text-sm sm:text-base">
+                {price} ₴
+              </p>
+
+              <div className="flex justify-center">
+                <span
+                  className="inline-flex items-center justify-center bg-slate-800 text-white px-5 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold
+                                 group-hover:bg-slate-700 transition"
+                >
+                  Переглянути
+                </span>
+              </div>
             </div>
           </Link>
         );

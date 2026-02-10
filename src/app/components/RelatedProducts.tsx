@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,16 +10,17 @@ export default function RelatedProducts({
   relatedProducts,
 }: RelatedProductsProps) {
   if (!relatedProducts || relatedProducts.length === 0) return null;
+
   const getMainImage = (images?: { url: string; is_main?: boolean }[]) =>
     images?.find((img) => img.is_main)?.url ?? images?.[0]?.url ?? null;
 
   return (
-    <section className="max-w-5xl mx-auto px-6 pb-16">
-      <h2 className="text-2xl font-semibold text-slate-800 mb-6">
+    <section className="max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16">
+      <h2 className="text-xl sm:text-2xl font-semibold text-slate-800 mb-4 sm:mb-6">
         Схожі товари
       </h2>
 
-      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
         {relatedProducts.map((item) => {
           const mainImage = getMainImage(item.product_images);
 
@@ -26,18 +28,20 @@ export default function RelatedProducts({
             <Link
               key={item.id}
               href={`/shop/${item.id}`}
-              className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="group bg-white rounded-2xl shadow-sm overflow-hidden border border-slate-100 transition
+                         hover:shadow-lg hover:-translate-y-0.5"
             >
-              <div className="relative w-full h-40 bg-slate-100">
+              <div className="relative w-full aspect-[4/3] bg-slate-100">
                 {mainImage ? (
                   <Image
                     src={mainImage}
-                    alt={item.name}
+                    alt={item.name ?? "Product image"}
                     fill
-                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                   />
                 ) : (
-                  <NoImagePlaceholder size="sm" />
+                  <NoImagePlaceholder size="sm" label="" />
                 )}
               </div>
 

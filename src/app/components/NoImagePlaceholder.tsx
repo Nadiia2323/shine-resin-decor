@@ -8,7 +8,7 @@ type Props = {
 
 export default function NoImagePlaceholder({
   label = "Немає фото",
-  size = "md",
+  size,
   className = "",
 }: Props) {
   const iconSize =

@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import imageCompression from "browser-image-compression";
 import type { NewImage, ProductImage } from "@/types";
+import { useRouter } from "next/navigation";
 
 type ProductImagesClientProps = {
   productId: number;
@@ -58,6 +59,7 @@ export default function ProductImagesClient({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
 
   const sortedImages = useMemo(() => {
     const list = Array.isArray(images) ? images : [];
@@ -138,6 +140,7 @@ export default function ProductImagesClient({
       );
 
       setImages(Array.isArray(data.images) ? data.images : []);
+      router.refresh();
     } catch (e) {
       setErrorMsg(e instanceof Error ? e.message : "Upload failed");
     } finally {
@@ -161,6 +164,7 @@ export default function ProductImagesClient({
         { method: "DELETE" },
       );
       setImages(Array.isArray(data.images) ? data.images : []);
+      router.refresh();
     } catch (e) {
       setImages(prev);
       setErrorMsg(e instanceof Error ? e.message : "Delete failed");
@@ -184,6 +188,7 @@ export default function ProductImagesClient({
         { method: "PATCH" },
       );
       setImages(Array.isArray(data.images) ? data.images : []);
+      router.refresh();
     } catch (e) {
       setImages(prev);
       setErrorMsg(e instanceof Error ? e.message : "Make main failed");

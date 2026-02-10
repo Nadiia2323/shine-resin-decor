@@ -15,41 +15,37 @@ export default function PageClient({ categories, products }: PageClientProps) {
 
   useEffect(() => {
     setIsLoading(true);
-
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-
+    const timeout = setTimeout(() => setIsLoading(false), 300);
     return () => clearTimeout(timeout);
   }, [selectedCategory]);
 
   return (
     <>
-      <section className="px-8 pb-10">
-        <CategoryCard categories={categories} onSelect={setSelectedCategory} />
+      <section className="px-4 sm:px-6 lg:px-8 pb-8 sm:pb-10">
+        <CategoryCard
+          categories={categories}
+          selected={selectedCategory}
+          onSelect={setSelectedCategory}
+        />
       </section>
 
-      <section className="pb-20 px-8">
+      <section className="pb-20 px-4 sm:px-6 lg:px-8">
         {isLoading ? (
-          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center">
+          <div className="grid gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, index) => (
               <div
                 key={index}
-                className="w-72 h-80 rounded-2xl bg-slate-200 animate-pulse"
+                className="w-full aspect-[9/11] rounded-2xl bg-slate-200 animate-pulse"
               />
             ))}
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <p className="text-center text-slate-600 max-w-xl mx-auto text-base sm:text-lg">
+            У цій категорії поки немає товарів. Спробуйте вибрати іншу або
+            напишіть нам для індивідуального замовлення 💛
+          </p>
         ) : (
-          <>
-            {filteredProducts.length === 0 ? (
-              <p className="text-center text-slate-600 max-w-xl mx-auto text-lg">
-                У цій категорії поки немає товарів. Спробуйте вибрати іншу або
-                напишіть нам для індивідуального замовлення 💛
-              </p>
-            ) : (
-              <ProductCard products={filteredProducts} />
-            )}
-          </>
+          <ProductCard products={filteredProducts} />
         )}
       </section>
     </>

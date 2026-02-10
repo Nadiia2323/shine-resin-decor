@@ -35,14 +35,14 @@ export default async function Page() {
   const categories = ["All", ...uniqueCategories];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-400">
+    <main className="min-h-screen bg-gradient-to-b from-slate-400 to-slate-50">
       <Navigation />
 
-      <section className="text-center pt-25 mb-5">
-        <h1 className="text-4xl font-extrabold text-slate-800 mb-3">
+      <section className="text-center pt-16 sm:pt-20 mb-6 px-4">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-3">
           Переглянути товари
         </h1>
-        <p className="text-slate-500 text-lg max-w-2xl mx-auto">
+        <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto">
           Ознайомтесь із нашими виробами з епоксидної смоли. Кожен створений
           вручну з любов’ю 💫
         </p>
@@ -50,18 +50,18 @@ export default async function Page() {
 
       <PageClient categories={categories} products={products || []} />
 
-      <section className="text-center pb-24">
-        <h2 className="text-2xl font-semibold text-slate-700 mb-4">
+      <section className="text-center pb-24 px-4">
+        <h2 className="text-xl sm:text-2xl font-semibold text-slate-700 mb-4">
           Не знайшли те, що шукали?
         </h2>
-        <p className="text-slate-500 mb-6">
+        <p className="text-slate-600 mb-6">
           Ми можемо створити виріб спеціально для вас 💛
         </p>
         <a
           href="https://t.me/evd_kriss"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block bg-slate-800 text-white text-lg font-semibold px-8 py-3 rounded-full hover:bg-slate-700 transition-transform transform hover:scale-105"
+          className="inline-flex items-center justify-center bg-slate-800 text-white text-base sm:text-lg font-semibold px-6 sm:px-8 py-3 rounded-full hover:bg-slate-700 transition-transform transform hover:scale-105"
         >
           Індивідуальне замовлення
         </a>

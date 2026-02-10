@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NoImagePlaceholder from "./NoImagePlaceholder";
 
 type ProductImage = {
@@ -18,17 +18,27 @@ type ProductGalleryProps = {
 };
 
 export default function ProductGallery({ images, name }: ProductGalleryProps) {
+  const sortedImages = useMemo(() => {
+    const list = [...(images ?? [])];
+    list.sort((a, b) => {
+      const aMain = a.is_main ? 1 : 0;
+      const bMain = b.is_main ? 1 : 0;
+      if (aMain !== bMain) return bMain - aMain;
+      return (a.position ?? 0) - (b.position ?? 0);
+    });
+    return list;
+  }, [images]);
+
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const hasImages = images.length > 0;
-  const mainImage = hasImages ? images[activeIndex]?.url : null;
+  const hasImages = sortedImages.length > 0;
+  const mainImage = hasImages ? sortedImages[activeIndex]?.url : null;
 
   useEffect(() => {
-    if (!images || images.length === 0) return;
-
-    const mainIndex = images.findIndex((img) => img.is_main);
+    if (!sortedImages.length) return;
+    const mainIndex = sortedImages.findIndex((img) => img.is_main);
     setActiveIndex(mainIndex !== -1 ? mainIndex : 0);
-  }, [images]);
+  }, [sortedImages]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -38,6 +48,8 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
             src={mainImage}
             alt={name}
             fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover transition-transform duration-500 hover:scale-105"
           />
         ) : (
@@ -45,31 +57,31 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
         )}
       </div>
 
-      {hasImages && images.length > 1 && (
-        <div className="flex gap-3 flex-wrap">
-          {images.map((img, index) => (
-            <button
-              key={img.id}
-              type="button"
-              onClick={() => setActiveIndex(index)}
-              className={`
-                relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border 
-                transition-all duration-200
-                ${
-                  index === activeIndex
-                    ? "border-cyan-500 ring-2 ring-cyan-300"
-                    : "border-slate-200 hover:border-slate-400"
-                }
-              `}
-            >
-              <Image
-                src={img.url}
-                alt={`${name} preview ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-            </button>
-          ))}
+      {hasImages && sortedImages.length > 1 && (
+        <div className="-mx-1 px-1">
+          <div className="flex gap-3 overflow-x-auto pb-1 snap-x snap-mandatory">
+            {sortedImages.map((img, index) => (
+              <button
+                key={img.id}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className={`relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border transition-all duration-200 snap-start
+                  ${
+                    index === activeIndex
+                      ? "border-cyan-500 ring-2 ring-cyan-300"
+                      : "border-slate-200 hover:border-slate-400"
+                  }`}
+              >
+                <Image
+                  src={img.url}
+                  alt={`${name} preview ${index + 1}`}
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

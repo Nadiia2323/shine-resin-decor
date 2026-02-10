@@ -13,6 +13,7 @@ import Link from "next/link";
 import InlineEditField from "./InLineEditField";
 import InlineEditSelect from "./InLineEditSelect";
 import { DeleteButton } from "./DeleteButton";
+import NoImagePlaceholder from "@/app/components/NoImagePlaceholder";
 
 export default function ProductsTable({
   products,
@@ -32,7 +33,6 @@ export default function ProductsTable({
 
       <tbody className="divide-y divide-slate-100">
         {products?.map((p) => {
-          console.log("product_images :>> ", p.product_images);
           const statusBase =
             "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold tracking-wide";
           const statusClass =
@@ -46,20 +46,24 @@ export default function ProductsTable({
             [...(p.product_images ?? [])].sort(
               (a, b) => (a.position ?? 0) - (b.position ?? 0),
             )[0]?.url ??
-            "https://res.cloudinary.com/dqgvmwnpl/image/upload/v1761499510/resin-shop/2459195_s9xnwq.jpg";
+            null;
 
           return (
             <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
               <td className="px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0">
-                    <Image
-                      src={mainImageUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      width={48}
-                      height={48}
-                    />
+                  <div className="h-12 w-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200 shrink-0 relative">
+                    {mainImageUrl ? (
+                      <Image
+                        src={mainImageUrl}
+                        alt={p.name ?? "Product image"}
+                        className="h-full w-full object-cover"
+                        width={48}
+                        height={48}
+                      />
+                    ) : (
+                      <NoImagePlaceholder size="sm" label="" />
+                    )}
                   </div>
 
                   <InlineEditField

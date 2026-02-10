@@ -30,6 +30,7 @@ export type ProductCardProps = {
 
 export type CategoryCardProps = {
   categories: string[];
+  selected: string;
   onSelect: (category: string) => void;
 };
 
