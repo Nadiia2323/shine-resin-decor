@@ -5,6 +5,8 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 export default async function Page() {
   const supabase = await createSupabaseServerClient();
 
+  const limit = 20;
+
   const { data: products } = await supabase
     .from("products")
     .select(
@@ -20,7 +22,9 @@ export default async function Page() {
     .order("created_at", { ascending: false })
     .order("is_main", { referencedTable: "product_images", ascending: false })
     .order("position", { referencedTable: "product_images", ascending: true })
-    .limit(40);
+    .range(0, limit - 1);
+
+  const initialOffset = (products?.length ?? 0) === limit ? limit : null;
 
   const { data: categoriesData } = await supabase
     .from("products")
@@ -48,7 +52,11 @@ export default async function Page() {
         </p>
       </section>
 
-      <PageClient categories={categories} products={products || []} />
+      <PageClient
+        categories={categories}
+        products={products || []}
+        initialOffset={initialOffset}
+      />
 
       <section className="text-center pb-24 px-4">
         <h2 className="text-xl sm:text-2xl font-semibold text-slate-700 mb-4">

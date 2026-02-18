@@ -10,10 +10,9 @@ export default async function AdminPage() {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  console.log("user :>> ", user);
 
   if (userError) {
-    console.error("auth.getUser error:", userError.message);
+    redirect("/login");
   }
 
   if (!user) redirect("/login");

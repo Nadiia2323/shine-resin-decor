@@ -22,6 +22,7 @@ export type User = {
 export type PageClientProps = {
   categories: string[];
   products: Product[];
+  initialOffset: number | null;
 };
 
 export type ProductCardProps = {

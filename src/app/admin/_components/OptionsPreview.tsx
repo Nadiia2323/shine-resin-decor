@@ -20,13 +20,17 @@ export default function OptionsPreview({ options, title }: Props) {
           <span
             key={i}
             className="
-              inline-flex items-center gap-2 rounded-full
-              border border-slate-200 bg-white px-3 py-1 text-xs
-              text-slate-700 shadow-sm
-            "
+    inline-flex items-start gap-2 rounded-2xl
+    border border-slate-200 bg-white px-3 py-1.5 text-xs
+    text-slate-700 shadow-sm
+  "
           >
-            <span className="max-w-[170px] truncate">{o.name}</span>
-            <span className="font-semibold text-slate-900">+{o.price} ₴</span>
+            <span className="max-w-[220px] sm:max-w-[260px] line-clamp-2 break-words">
+              {o.name}
+            </span>
+            <span className="font-semibold text-slate-900 whitespace-nowrap">
+              +{o.price} ₴
+            </span>
           </span>
         ))}
 

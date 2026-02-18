@@ -230,7 +230,13 @@ export default function ProductImagesClient({
             key={img.id}
             className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100"
           >
-            <Image src={img.url} alt="" fill className="object-cover" />
+            <Image
+              src={img.url}
+              alt=""
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
 
             {img.is_main && (
               <span className="absolute left-1 top-1 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-slate-800">
