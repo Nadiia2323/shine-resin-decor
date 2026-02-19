@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shine Resin Decor ✨  
+Modern full-stack e-commerce application for handmade epoxy resin decor.
 
-## Getting Started
+Live Demo: https://shine-resin-decor.vercel.app/
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Shine Resin Decor is a production-oriented full-stack web application built with Next.js (App Router).  
+The project includes a public storefront and a protected admin dashboard powered by Supabase Auth.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The goal of this project was to design a clean, scalable architecture and implement real-world features such as pagination, image management, authentication, and admin access control.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+### Storefront
+- Product catalog with dynamic pagination (Load More pattern)
+- Product detail page with image gallery
+- Related products logic
+- Categories & product options preview
+- Responsive UI (mobile-first)
+- Optimized image delivery via Cloudinary
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Admin Dashboard
+- Secure login using Supabase Auth
+- Create / edit / delete products
+- Manage categories and product options
+- Upload and manage product images
+- Protected admin routes (authentication required)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Frontend:
+- Next.js (App Router)
+- React + TypeScript
+- Tailwind CSS
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Backend:
+- Supabase (PostgreSQL database)
+- Supabase Auth (session-based authentication)
+- API routes / server components for data access
+
+Media:
+- Cloudinary for image storage and optimization
+
+Deployment:
+- Vercel (CI/CD via GitHub integration)
+
+---
+
+## Security
+
+- Admin routes protected via Supabase Auth
+- Environment variables stored in `.env.local`
+- Sensitive keys (Cloudinary API Secret) never exposed to client
+- Database access handled through secure server logic
+
+---
+
+## Pagination Strategy
+
+The product catalog loads the first batch of items (20 products)  
+Additional products are fetched dynamically via a “Load More” button to:
+
+- Improve performance
+- Reduce initial payload
+- Provide better UX on mobile devices
+
+
+
